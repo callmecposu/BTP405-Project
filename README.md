@@ -14,13 +14,13 @@ https://docs.google.com/document/d/18r3f97LHfF1MQrcBu4TFE2jFhboMJkEVPRCAOlpIBVA/
 ### To maintain an organized codebase, we adhere to the following branch naming conventions:
 
 
-- New Features: feature/<feature-name>
-- Bug Fixes: bugfix/<bug-name>
-- Hot Fixes: hotfix/<hotfix-name>
-- Releases: release/<release-version>
-- Improvements: improvement/<improvement-name>
-- Refactoring: refactor/<component>
-- Documentation: docs/<what-to-document>
-- Development: develop (This is an ongoing branch where features are merged and tested)
-- Main Branch: main (This is the default branch, often reflecting the production-ready state of our code)
+- New Features: `feature/<feature-name>`
+- Bug Fixes: `bugfix/<bug-name>`
+- Hot Fixes: `hotfix/<hotfix-name>`
+- Releases: `release/<release-version>`
+- Improvements: `improvement/<improvement-name>`
+- Refactoring: `refactor/<component>`
+- Documentation: `docs/<what-to-document>`
+- Development: `develop (This is an ongoing branch where features are merged and tested)`
+- Main Branch: `main (This is the default branch, often reflecting the production-ready state of our code)`
 
