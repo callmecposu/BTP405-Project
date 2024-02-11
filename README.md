@@ -24,3 +24,9 @@ https://docs.google.com/document/d/18r3f97LHfF1MQrcBu4TFE2jFhboMJkEVPRCAOlpIBVA/
 - Development: `develop (This is an ongoing branch where features are merged and tested)`
 - Main Branch: `main (This is the default branch, often reflecting the production-ready state of our code)`
 
+## GitHub Project Board 📌
+
+- Board: View items from the current iteration and development progress
+- Backlog: View all tasks that will be completed in the following iterations
+- User Stories: View all User Stories and their descriptions
+- My Tasks: View all Tasks assigned to @me
