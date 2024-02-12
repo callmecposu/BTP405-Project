@@ -2,7 +2,7 @@
 - pip3 install -U Flask
 - pip3 install python-dotenv
 - pip3 install mongoengine
-- pip3 install certify
+- pip3 install certifi
 - pip3 install bcrypt
 
 ## Launching Server
