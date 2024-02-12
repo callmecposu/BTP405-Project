@@ -4,13 +4,18 @@ import { Inter } from "next/font/google";
 export default function Home() {
     return (
         <div>
-            <button className="btn">Button</button>
-            <button className="btn btn-neutral">Neutral</button>
-            <button className="btn btn-primary">Primary</button>
-            <button className="btn btn-secondary">Secondary</button>
-            <button className="btn btn-accent">Accent</button>
-            <button className="btn btn-ghost">Ghost</button>
-            <button className="btn btn-link">Link</button>
+            <div className="navbar w-full bg-neutral rounded-bl-xl rounded-br-xl p-4">
+                <img
+                className="mx-4"
+                    src="logo.svg"
+                    alt=""
+                    width="200px"
+                />
+                <div className="flex justify-end w-full">
+                    <a className="btn btn-primary mx-4 flex">Login</a>
+                    <a className="btn btn-outline mx-4">Sign Up</a>
+                </div>
+            </div>
         </div>
     );
 }
