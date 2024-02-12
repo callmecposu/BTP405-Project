@@ -3,6 +3,7 @@ from mongoengine import connect
 from dotenv import load_dotenv
 import os
 from services import user as UserService
+import certifi
 
 app = Flask(__name__)
 
@@ -10,7 +11,7 @@ app = Flask(__name__)
 load_dotenv()
 
 # Connect to MongoDB Atlas
-connect(host = os.environ.get('MONGODB'))
+connect(host = os.environ.get('MONGODB'), tlsCAFile=certifi.where())
 
 @app.route("/")
 def home():
