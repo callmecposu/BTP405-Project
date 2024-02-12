@@ -15,6 +15,11 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui')],
+  daisyui:{
+    themes:[
+      'cmyk'
+    ]
+  }
 };
 export default config;
