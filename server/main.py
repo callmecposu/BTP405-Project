@@ -36,6 +36,17 @@ def createUser():
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+@app.route('/login', methods=['POST'])
+def loginUser():
+    print(request.json)
+    username = request.json['username']
+    password = request.json['password']
+    (result, err) = UserService.checkPassword(username=username, attemptedPassword=password)
+    resp = make_response(result)
+    resp.headers['Content-Type'] = 'application/json'
+    if (err):
+        resp.status = err
+    return resp
 
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
