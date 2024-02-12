@@ -68,5 +68,19 @@ def createRecord():
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+@app.route('/spendingRecord/<id>', methods=['PUT'])
+def editRecord(id):
+    source = request.json['source']
+    date = request.json['date']
+    amount = request.json['amount']
+    category = request.json['category']
+    tags = request.json['tags']
+    userId = request.json['userId']
+    note = request.json['note']
+    editedRecord = SpendingRecordService.editSpendingRecord(id=id, source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
+    resp = make_response(editedRecord)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
