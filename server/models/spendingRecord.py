@@ -7,3 +7,4 @@ class SpendingRecord(Document):
     date = DateTimeField(required=True)
     category = StringField(required=False)
     tags = ListField(StringField(), required=False)
+    note = StringField(required=False)
