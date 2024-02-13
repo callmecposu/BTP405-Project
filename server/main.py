@@ -30,26 +30,37 @@ def getUserById(id):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
-@app.route('/user', methods=['POST'])
-def createUser():
-    print(request.json)
-    username = request.json['username']
-    password = request.json['password']
-    newUser = UserService.createUser(username=username, password=password)
-    resp = make_response(newUser)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+@app.route('/user', methods=['POST', 'GET'])
+def userRoute():
+    if request.method == 'POST':
+        print(request.json)
+        username = request.json['username']
+        password = request.json['password']
+        (newUser, token) = UserService.createUser(username=username, password=password)
+        resp = make_response(newUser)
+        resp.headers['Content-Type'] = 'application/json'
+        resp.headers['Token'] = token
+        return resp
+    elif request.method == 'GET':
+        token = request.headers['Token']
+        print(token)
+        user = UserService.getUserFromJWT(token)
+        resp = make_response(user)
+        resp.headers['Content-Type'] = 'application/json'
+        return resp
 
 @app.route('/login', methods=['POST'])
 def loginUser():
     print(request.json)
     username = request.json['username']
     password = request.json['password']
-    (result, err) = UserService.checkPassword(username=username, attemptedPassword=password)
+    (result, token, err) = UserService.checkPassword(username=username, attemptedPassword=password)
     resp = make_response(result)
     resp.headers['Content-Type'] = 'application/json'
     if (err):
         resp.status = err
+    if (token):
+        resp.headers['Token'] = token
     return resp
 
 # SpendingRecord routers:
