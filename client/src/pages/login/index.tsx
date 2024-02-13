@@ -11,6 +11,10 @@ const Login = () => {
 
     const handleLogin = async () => {
         setError(null);
+        if (username.length == 0 || password.length == 0){
+            setError('Please fill out all the fields!')
+            return
+        }
         const response = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: {
