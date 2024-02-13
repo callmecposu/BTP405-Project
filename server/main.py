@@ -57,6 +57,7 @@ def loginUser():
         resp = make_response()
         resp.headers['Access-Control-Allow-Origin'] = '*'
         resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Expose-Headers'] = '*'
         resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         return resp
     elif request.method == 'POST':
@@ -69,6 +70,7 @@ def loginUser():
         # CORS headers
         resp.headers['Access-Control-Allow-Origin'] = '*'
         resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Expose-Headers'] = '*'
         resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         # end CORS headers
         if (err):

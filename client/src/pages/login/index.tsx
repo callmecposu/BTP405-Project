@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { setCookie } from "@/utils/cookies";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -10,12 +11,24 @@ const Login = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Access-Control-Allow-Headers": '*'
             },
             body: JSON.stringify({ username, password }),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                const allHeaders = response.headers.entries();
+                for (const header of allHeaders as any) {
+                  console.log(header[0], ':', header[1]);
+                }
+                setCookie(
+                    "jwt",
+                    response.headers.get("token") as string,
+                    60 * 60 * 24 * 3
+                );
+                return response.json();
+            })
             .then((result: any) => {
-                console.log(result)
+                console.log(result);
             });
     };
 
