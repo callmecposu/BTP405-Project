@@ -15,7 +15,7 @@ def addSpendingRecord(source, date, amount, note, category, tags, userId):
     return newSpendingRecord.to_json()
 
 def editSpendingRecord(id, source, date, amount, note, category, tags, userId):
-    spendingRecord = SpendingRecordModel.SpendingRecord.objects(id=id).first()
+    spendingRecord = SpendingRecordModel.SpendingRecord.objects(id=id, userId=userId).first()
     spendingRecord.source = source
     spendingRecord.amount = amount
     spendingRecord.date = date
