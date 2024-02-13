@@ -1,35 +1,46 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { setCookie } from "@/utils/cookies";
+import { setCookie, unsetCookie } from "@/utils/cookies";
 
 const Login = () => {
+    const router = useRouter()
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = () => {
-        fetch("http://localhost:8000/login", {
+    const handleLogin = async () => {
+        setError(null);
+        const response = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Headers": '*'
+                "Access-Control-Allow-Headers": "*",
             },
             body: JSON.stringify({ username, password }),
-        })
-            .then((response) => {
-                const allHeaders = response.headers.entries();
-                for (const header of allHeaders as any) {
-                  console.log(header[0], ':', header[1]);
-                }
-                setCookie(
-                    "jwt",
-                    response.headers.get("token") as string,
-                    60 * 60 * 24 * 3
-                );
-                return response.json();
-            })
-            .then((result: any) => {
-                console.log(result);
-            });
+        });
+        const result = await response.json();
+        console.log(result)
+        if (response.status == 400 || response.status == 404) {
+            setError(result.message);
+            unsetCookie("jwt");
+            return;
+        }
+        if (response.status != 200) {
+            setError("An Error Occured");
+            unsetCookie("jwt");
+            return;
+        }
+        const allHeaders = response.headers.entries();
+        for (const header of allHeaders as any) {
+            console.log(header[0], ":", header[1]);
+        }
+        setCookie(
+            "jwt",
+            response.headers.get("token") as string,
+            60 * 60 * 24 * 3
+        );
+        router.push('/home')
     };
 
     return (
@@ -62,9 +73,9 @@ const Login = () => {
                         >
                             Login
                         </button>
+                        {error && (<h1 className="text-error mt-4">{error}</h1>)}
                     </div>
                 </div>
-
                 <div>
                     <div
                         className="hero w-80 h-full rounded-3xl"
