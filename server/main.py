@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 import os
 from services import user as UserService
 from services import spendingRecord as SpendingRecordService
+from services import jwt as JWTService
 import certifi
+import json
 
 app = Flask(__name__)
 
@@ -67,12 +69,21 @@ def loginUser():
 
 @app.route('/spendingRecord', methods=['POST'])
 def createRecord():
+    try:
+        token = request.headers['Token']
+        tokenPayload = JWTService.decodeToken(token)
+        userId = tokenPayload["id"]
+    except:
+        resp = make_response({'message':'Unauthorized'})
+        resp.status = 401
+        return resp
+
     source = request.json['source']
     date = request.json['date']
     amount = request.json['amount']
     category = request.json['category']
     tags = request.json['tags']
-    userId = request.json['userId']
+    userId = str(userId)
     note = request.json['note']
     newRecord = SpendingRecordService.addSpendingRecord(source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
     resp = make_response(newRecord)
@@ -81,12 +92,21 @@ def createRecord():
 
 @app.route('/spendingRecord/<id>', methods=['PUT'])
 def editRecord(id):
+    try:
+        token = request.headers['Token']
+        tokenPayload = JWTService.decodeToken(token)
+        userId = tokenPayload["id"]
+    except:
+        resp = make_response({'message':'Unauthorized'})
+        resp.status = 401
+        return resp
+
     source = request.json['source']
     date = request.json['date']
     amount = request.json['amount']
     category = request.json['category']
     tags = request.json['tags']
-    userId = request.json['userId']
+    userId = str(userId)
     note = request.json['note']
     editedRecord = SpendingRecordService.editSpendingRecord(id=id, source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
     resp = make_response(editedRecord)
