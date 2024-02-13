@@ -5,3 +5,9 @@
 .lead{
     line-height: 3.5rem;
 }
+
+.login-container{
+    width: 800px;
+    height: 600px;
+    @apply p-4
+}
