@@ -23,6 +23,8 @@ def createUser(username, password):
 def checkPassword(username, attemptedPassword):
     # get the User object by their username
     user = UserModel.User.objects(username=username).first()
+    if not user:
+        return ({'message': f'User \'{username}\' does not exist!'}, None, 404)
     # compare the hashed and the attemted password
     if bcrypt.checkpw(attemptedPassword.encode('utf-8'), user.password):
         # create a JWT for the user
