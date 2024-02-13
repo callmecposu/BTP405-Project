@@ -1,6 +1,7 @@
 from mongoengine import *
 from models import user as UserModel
 import bcrypt
+from . import jwt as JWTService
 
 def getUsers():
     return UserModel.User.objects().to_json()
@@ -15,13 +16,24 @@ def createUser(username, password):
     newUser = UserModel.User(username=username, password=hashedPassword)
     # save the new User object
     newUser.save()
-    return newUser.to_json()
+    # create a JWT for the user
+    token = JWTService.createToken(str(newUser.id))
+    return (newUser.to_json(), token)
 
 def checkPassword(username, attemptedPassword):
     # get the User object by their username
     user = UserModel.User.objects(username=username).first()
     # compare the hashed and the attemted password
     if bcrypt.checkpw(attemptedPassword.encode('utf-8'), user.password):
-        return (user.to_json(), None)
+        # create a JWT for the user
+        token = JWTService.createToken(str(user.id))
+        return (user.to_json(), token, None)
     else:
-        return ({'message':'Passwords do not match!'}, 400)
+        return ({'message':'Passwords do not match!'}, None, 400)
+    
+def getUserFromJWT(token):
+    # decode the user id from the token
+    userId = JWTService.decodeToken(token)['id']
+    # find the user with this id in the database
+    user = UserModel.User.objects(id=userId)
+    return user.to_json()
