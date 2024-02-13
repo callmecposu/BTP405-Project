@@ -8,8 +8,8 @@ export default function Home() {
             <div className="navbar w-full bg-neutral rounded-bl-xl rounded-br-xl p-4">
                 <img className="mx-4" src="logo.svg" alt="" width="200px" />
                 <div className="flex justify-end w-full">
-                    <a className="btn btn-primary mx-4 flex">Login</a>
-                    <a className="btn btn-outline mx-4">Sign Up</a>
+                <button className="btn mx-4 btn-primary" onClick={() =>{router.push("/login")}}>Login</button>
+                    <button className="btn btn-outline mx-4" onClick={() =>{router.push("/signup")}}>Sign Up</button>
                 </div>
             </div>
             <div
