@@ -1,4 +1,5 @@
 from mongoengine import *
+from mongoengine.errors import NotUniqueError
 from models import user as UserModel
 import bcrypt
 from . import jwt as JWTService
@@ -15,10 +16,15 @@ def createUser(username, password):
     # create the new User object
     newUser = UserModel.User(username=username, password=hashedPassword)
     # save the new User object
-    newUser.save()
+    try:
+        newUser.save()
+    except NotUniqueError as err:
+        print(err.args[0])
+        return ({'message': f'User \'{username}\' already exists!'}, None, 400 )
+
     # create a JWT for the user
     token = JWTService.createToken(str(newUser.id))
-    return (newUser.to_json(), token)
+    return (newUser.to_json(), token, None)
 
 def checkPassword(username, attemptedPassword):
     # get the User object by their username

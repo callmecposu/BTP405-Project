@@ -32,16 +32,30 @@ def getUserById(id):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
-@app.route('/user', methods=['POST', 'GET'])
+@app.route('/user', methods=['POST', 'GET', 'OPTIONS'])
 def userRoute():
-    if request.method == 'POST':
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Expose-Headers'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        return resp
+    elif request.method == 'POST':
         print(request.json)
         username = request.json['username']
         password = request.json['password']
-        (newUser, token) = UserService.createUser(username=username, password=password)
+        (newUser, token, err) = UserService.createUser(username=username, password=password)
         resp = make_response(newUser)
         resp.headers['Content-Type'] = 'application/json'
-        resp.headers['Token'] = token
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Expose-Headers'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        if err:
+            resp.status = err
+        if token:
+            resp.headers['Token'] = token
         return resp
     elif request.method == 'GET':
         token = request.headers['Token']
@@ -73,9 +87,9 @@ def loginUser():
         resp.headers['Access-Control-Expose-Headers'] = '*'
         resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         # end CORS headers
-        if (err):
+        if err:
             resp.status = err
-        if (token):
+        if token:
             resp.headers['Token'] = token
         return resp
 
