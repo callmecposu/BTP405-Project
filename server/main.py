@@ -51,19 +51,31 @@ def userRoute():
         resp.headers['Content-Type'] = 'application/json'
         return resp
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'OPTIONS'])
 def loginUser():
-    print(request.json)
-    username = request.json['username']
-    password = request.json['password']
-    (result, token, err) = UserService.checkPassword(username=username, attemptedPassword=password)
-    resp = make_response(result)
-    resp.headers['Content-Type'] = 'application/json'
-    if (err):
-        resp.status = err
-    if (token):
-        resp.headers['Token'] = token
-    return resp
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        return resp
+    elif request.method == 'POST':
+        print(request.json)
+        username = request.json['username']
+        password = request.json['password']
+        (result, token, err) = UserService.checkPassword(username=username, attemptedPassword=password)
+        resp = make_response(result)
+        resp.headers['Content-Type'] = 'application/json'
+        # CORS headers
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Headers'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        # end CORS headers
+        if (err):
+            resp.status = err
+        if (token):
+            resp.headers['Token'] = token
+        return resp
 
 # SpendingRecord routers:
 
