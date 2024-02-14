@@ -23,18 +23,6 @@ export const getServerSideProps = async (context: any) => {
 };
 
 const Home = ({ user }: any) => {
-    // useEffect(() => {
-    //     console.log(user);
-    // }, []);
-
-    // useEffect(() => {
-    //     fetch("http://localhost:8000/user", {
-    //         headers: {
-    //             Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YzliYTQ3Mzk0ZGE1ZjMxNTBjYTUxOCJ9.gnposz8fKx0zdw1YJoky1fcFEgf8oswHXZ7FnirlASQ",
-    //         },
-    //     }).then(res => res.json()).then(json => console.log(json));
-    // }, []);
-
     return (
         <div>
             <div className="navbar bg-primary">
