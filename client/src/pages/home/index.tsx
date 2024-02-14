@@ -25,7 +25,7 @@ export const getServerSideProps = async (context: any) => {
 const Home = ({ user }: any) => {
     return (
         <div>
-            <div className="navbar bg-primary">
+            <div className="navbar bg-primary py-2">
                 <div className="navbar-start">
                     <div className="dropdown">
                         <div
@@ -65,7 +65,7 @@ const Home = ({ user }: any) => {
                     </div>
                 </div>
                 <div className="navbar-center">
-                    <a className="btn btn-ghost text-xl">daisyUI</a>
+                    <img src="home_logo.svg" width='200px' alt="" />
                 </div>
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
