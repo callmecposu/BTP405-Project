@@ -1,3 +1,5 @@
+import json
+import bson
 from mongoengine import *
 from models import spendingRecord as SpendingRecordModel
 import re
@@ -29,6 +31,14 @@ def editSpendingRecord(id, source, date, amount, note, category, tags, userId):
 def search(userId, query, dateRange, amountRange, category, sorting):
     pipeline = []
 
+    pipeline.append(
+        {
+            '$match': {
+                'userId': bson.ObjectId(userId)
+            }
+        }
+    )
+
     if query:
         regex_query = re.compile(query, re.IGNORECASE)
         pipeline.append(
@@ -49,7 +59,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-    if not dateRange[0] == -1:
+    if dateRange[0] != '-1':
         pipeline.append(
             {
                 '$match': {
@@ -59,7 +69,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-    if not dateRange[1] == -1:
+    if dateRange[1] != '-1':
         pipeline.append(
             {
                 '$match': {
@@ -69,7 +79,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-    if not amountRange[0] == -1:
+    if amountRange[0] != '-1':
         pipeline.append(
             {
                 '$match': {
@@ -79,7 +89,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-    if not amountRange[1] == -1:
+    if amountRange[1] != '-1':
         pipeline.append(
             {
                 '$match': {
@@ -89,7 +99,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-    if not len(category) == 0:
+    if len(category) != 0:
         pipeline.append(
             {
                 '$match': {
@@ -130,4 +140,8 @@ def search(userId, query, dateRange, amountRange, category, sorting):
             }
         )
 
-    spendingRecords = SpendingRecordModel.SpendingRecord.objects(userId=userId).aggregate(pipeline)
+    print(pipeline)
+
+    spendingRecords = SpendingRecordModel.SpendingRecord.objects().aggregate(pipeline)
+
+    return json.dumps(list(spendingRecords), default=str)
