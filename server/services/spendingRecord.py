@@ -1,3 +1,4 @@
+import datetime
 import json
 import bson
 from mongoengine import *
@@ -64,7 +65,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
             {
                 '$match': {
                     'date': {
-                        '$gte': dateRange[0]
+                        '$gte': datetime.datetime.strptime(dateRange[0], '%Y-%m-%d')
                     }
                 }
             }
@@ -74,7 +75,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
             {
                 '$match': {
                     'date': {
-                        '$lte': dateRange[1]
+                        '$lte': datetime.datetime.strptime(dateRange[1], '%Y-%m-%d')
                     }
                 }
             }
@@ -84,7 +85,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
             {
                 '$match': {
                     'amount': {
-                        '$gte': amountRange[0]
+                        '$gte': float(amountRange[0])
                     }
                 }
             }
@@ -94,7 +95,7 @@ def search(userId, query, dateRange, amountRange, category, sorting):
             {
                 '$match': {
                     'amount': {
-                        '$lte': amountRange[1]
+                        '$lte': float(amountRange[1])
                     }
                 }
             }
@@ -139,8 +140,6 @@ def search(userId, query, dateRange, amountRange, category, sorting):
                 }
             }
         )
-
-    print(pipeline)
 
     spendingRecords = SpendingRecordModel.SpendingRecord.objects().aggregate(pipeline)
 
