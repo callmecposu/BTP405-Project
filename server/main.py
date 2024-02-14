@@ -136,5 +136,34 @@ def editRecord(id):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+@app.route('/spendingRecord', methods=['GET'])
+def searchRecords():
+    try:
+        token = request.headers['Token']
+        tokenPayload = JWTService.decodeToken(token)
+        userId = tokenPayload["id"]
+    except:
+        resp = make_response({'message':'Unauthorized'})
+        resp.status = 401
+        return resp
+
+    try:
+        query = request.args.get('query')
+        dateRange = (request.args.get('dateFrom'), request.args.get('dateTo'))
+        amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
+        category = request.args.get('category')
+        sorting = request.args.get('sorting')
+        userId = str(userId)
+    except:
+        resp = make_response({'message':'Bad Request'})
+        resp.status = 400
+        return resp
+    
+    records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
+
+    resp = make_response(records)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
