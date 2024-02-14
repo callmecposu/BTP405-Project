@@ -152,12 +152,18 @@ def searchRecords():
         resp.status = 401
         return resp
 
-    query = request.args.get('query')
-    dateRange = (request.args.get('dateFrom'), request.args.get('dateTo'))
-    amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
-    category = request.args.get('category')
-    sorting = request.args.get('sorting')
-    userId = str(userId)
+    try:
+        query = request.args.get('query')
+        dateRange = (request.args.get('dateFrom'), request.args.get('dateTo'))
+        amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
+        category = request.args.get('category')
+        sorting = request.args.get('sorting')
+        userId = str(userId)
+    except:
+        resp = make_response({'message':'Bad Request'})
+        resp.status = 400
+        return resp
+    
     records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
 
     resp = make_response(records)

@@ -30,117 +30,121 @@ def editSpendingRecord(id, source, date, amount, note, category, tags, userId):
     return spendingRecord.to_json()
 
 def search(userId, query, dateRange, amountRange, category, sorting):
-    pipeline = []
+    try:
+        pipeline = []
 
-    pipeline.append(
-        {
-            '$match': {
-                'userId': bson.ObjectId(userId)
-            }
-        }
-    )
-
-    if query:
-        regex_query = re.compile(query, re.IGNORECASE)
         pipeline.append(
             {
                 '$match': {
-                    '$or': [
-                        {
-                            'source': {
-                                '$regex': regex_query
+                    'userId': bson.ObjectId(userId)
+                }
+            }
+        )
+
+        if query:
+            regex_query = re.compile(query, re.IGNORECASE)
+            pipeline.append(
+                {
+                    '$match': {
+                        '$or': [
+                            {
+                                'source': {
+                                    '$regex': regex_query
+                                }
+                            },
+                            {
+                                'tags': {
+                                    '$regex': regex_query
+                                }
                             }
-                        },
-                        {
-                            'tags': {
-                                '$regex': regex_query
-                            }
+                        ]
+                    }
+                }
+            )
+        if dateRange[0] != '-1':
+            pipeline.append(
+                {
+                    '$match': {
+                        'date': {
+                            '$gte': datetime.datetime.strptime(dateRange[0], '%Y-%m-%d')
                         }
-                    ]
-                }
-            }
-        )
-    if dateRange[0] != '-1':
-        pipeline.append(
-            {
-                '$match': {
-                    'date': {
-                        '$gte': datetime.datetime.strptime(dateRange[0], '%Y-%m-%d')
                     }
                 }
-            }
-        )
-    if dateRange[1] != '-1':
-        pipeline.append(
-            {
-                '$match': {
-                    'date': {
-                        '$lte': datetime.datetime.strptime(dateRange[1], '%Y-%m-%d')
+            )
+        if dateRange[1] != '-1':
+            pipeline.append(
+                {
+                    '$match': {
+                        'date': {
+                            '$lte': datetime.datetime.strptime(dateRange[1], '%Y-%m-%d')
+                        }
                     }
                 }
-            }
-        )
-    if amountRange[0] != '-1':
-        pipeline.append(
-            {
-                '$match': {
-                    'amount': {
-                        '$gte': float(amountRange[0])
+            )
+        if amountRange[0] != '-1':
+            pipeline.append(
+                {
+                    '$match': {
+                        'amount': {
+                            '$gte': float(amountRange[0])
+                        }
                     }
                 }
-            }
-        )
-    if amountRange[1] != '-1':
-        pipeline.append(
-            {
-                '$match': {
-                    'amount': {
-                        '$lte': float(amountRange[1])
+            )
+        if amountRange[1] != '-1':
+            pipeline.append(
+                {
+                    '$match': {
+                        'amount': {
+                            '$lte': float(amountRange[1])
+                        }
                     }
                 }
-            }
-        )
-    if len(category) != 0:
-        pipeline.append(
-            {
-                '$match': {
-                    'category': category
+            )
+        if len(category) != 0:
+            pipeline.append(
+                {
+                    '$match': {
+                        'category': category
+                    }
                 }
-            }
-        )
-    if sorting == 'date_asc':
-        pipeline.append(
-            {
-                '$sort': {
-                    'date': 1
+            )
+        if sorting == 'date_asc':
+            pipeline.append(
+                {
+                    '$sort': {
+                        'date': 1
+                    }
                 }
-            }
-        )
-    elif sorting == 'date_desc':
-        pipeline.append(
-            {
-                '$sort': {
-                    'date': -1
+            )
+        elif sorting == 'date_desc':
+            pipeline.append(
+                {
+                    '$sort': {
+                        'date': -1
+                    }
                 }
-            }
-        )
-    elif sorting == 'amount_asc':
-        pipeline.append(
-            {
-                '$sort': {
-                    'amount': 1
+            )
+        elif sorting == 'amount_asc':
+            pipeline.append(
+                {
+                    '$sort': {
+                        'amount': 1
+                    }
                 }
-            }
-        )
-    elif sorting == 'amount_desc':
-        pipeline.append(
-            {
-                '$sort': {
-                    'amount': -1
+            )
+        elif sorting == 'amount_desc':
+            pipeline.append(
+                {
+                    '$sort': {
+                        'amount': -1
+                    }
                 }
-            }
-        )
+            )
 
-    spendingRecords = SpendingRecordModel.SpendingRecord.objects().aggregate(pipeline)
+        spendingRecords = SpendingRecordModel.SpendingRecord.objects().aggregate(pipeline)
 
-    return json.dumps(list(spendingRecords), default=str)
+        return json.dumps(list(spendingRecords), default=str)
+    except Exception as e:
+        print(e)
+        return []
