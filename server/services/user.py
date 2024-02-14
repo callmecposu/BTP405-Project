@@ -43,5 +43,5 @@ def getUserFromJWT(token):
     # decode the user id from the token
     userId = JWTService.decodeToken(token)['id']
     # find the user with this id in the database
-    user = UserModel.User.objects(id=userId)
+    user = UserModel.User.objects(id=userId).first()
     return user.to_json()

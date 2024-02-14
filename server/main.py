@@ -57,6 +57,7 @@ def userRoute():
         user = UserService.getUserFromJWT(token)
         resp = make_response(user)
         resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
 
 @app.route('/login', methods=['POST', 'OPTIONS'])
