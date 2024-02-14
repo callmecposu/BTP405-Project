@@ -6,7 +6,7 @@ from services import user as UserService
 from services import spendingRecord as SpendingRecordService
 from services import jwt as JWTService
 import certifi
-import json
+from services import cors as CORSService
 
 app = Flask(__name__)
 
@@ -29,17 +29,14 @@ def home():
 def getUserById(id):
     user = UserService.getUserById(id)
     resp = make_response(user)
-    resp.headers['Content-Type'] = 'application/json'
+    CORSService.addCORS(resp, 'POST, GET, OPTIONS')
     return resp
 
 @app.route('/user', methods=['POST', 'GET', 'OPTIONS'])
 def userRoute():
     if request.method == 'OPTIONS':
         resp = make_response()
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        resp.headers['Access-Control-Allow-Headers'] = '*'
-        resp.headers['Access-Control-Expose-Headers'] = '*'
-        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
     elif request.method == 'POST':
         print(request.json)
@@ -48,10 +45,7 @@ def userRoute():
         (newUser, token, err) = UserService.createUser(username=username, password=password)
         resp = make_response(newUser)
         resp.headers['Content-Type'] = 'application/json'
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        resp.headers['Access-Control-Allow-Headers'] = '*'
-        resp.headers['Access-Control-Expose-Headers'] = '*'
-        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         if err:
             resp.status = err
         if token:
@@ -63,6 +57,7 @@ def userRoute():
         user = UserService.getUserFromJWT(token)
         resp = make_response(user)
         resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
 
 @app.route('/login', methods=['POST', 'OPTIONS'])
