@@ -148,3 +148,12 @@ def search(userId, query, dateRange, amountRange, category, sorting):
     except Exception as e:
         print(e)
         return []
+
+def deleteRecord(id, userId):
+    try:
+        spendingRecord = SpendingRecordModel.SpendingRecord.objects(id=id, userId=userId).first()
+        spendingRecord.delete()
+        return spendingRecord.to_json()
+    except Exception as e:
+        print(e)
+        return None

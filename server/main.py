@@ -165,5 +165,27 @@ def searchRecords():
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+@app.route('/spendingRecord/<id>', methods=['DELETE'])
+def deleteRecord(id):
+    try:
+        token = request.headers['Token']
+        tokenPayload = JWTService.decodeToken(token)
+        userId = tokenPayload["id"]
+    except:
+        resp = make_response({'message':'Unauthorized'})
+        resp.status = 401
+        return resp
+
+    try:
+        userId = str(userId)
+        deletedRecord = SpendingRecordService.deleteRecord(id=id, userId=userId)
+        resp = make_response(deletedRecord)
+        resp.headers['Content-Type'] = 'application/json'
+        return resp
+    except:
+        resp = make_response({'message':'Bad Request'})
+        resp.status = 400
+        return resp
+
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
