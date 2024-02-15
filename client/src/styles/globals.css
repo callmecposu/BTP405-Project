@@ -1841,6 +1841,10 @@ html {
   margin-bottom: 2rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mt-3 {
   margin-top: 0.75rem;
 }
@@ -1875,6 +1879,10 @@ html {
 
 .w-10 {
   width: 2.5rem;
+}
+
+.w-12 {
+  width: 3rem;
 }
 
 .w-2\/3 {
@@ -1961,6 +1969,15 @@ html {
   border-bottom-right-radius: 0.75rem;
 }
 
+.border-4 {
+  border-width: 4px;
+}
+
+.border-secondary {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-s,oklch(var(--s)/var(--tw-border-opacity)));
+}
+
 .bg-base-100 {
   --tw-bg-opacity: 1;
   background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
@@ -1974,6 +1991,11 @@ html {
 .bg-primary {
   --tw-bg-opacity: 1;
   background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity)));
+}
+
+.bg-secondary {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-s,oklch(var(--s)/var(--tw-bg-opacity)));
 }
 
 .bg-opacity-10 {
@@ -1990,11 +2012,6 @@ html {
 
 .p-4 {
   padding: 1rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .py-2 {
@@ -2025,6 +2042,14 @@ html {
   font-weight: 700;
 }
 
+.font-light {
+  font-weight: 300;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
 .text-error {
   --tw-text-opacity: 1;
   color: var(--fallback-er,oklch(var(--er)/var(--tw-text-opacity)));
@@ -2040,6 +2065,11 @@ html {
   color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
 }
 
+.text-slate-100 {
+  --tw-text-opacity: 1;
+  color: rgb(241 245 249 / var(--tw-text-opacity));
+}
+
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
@@ -2052,6 +2082,12 @@ html {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-xl {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .lead{
   line-height: 3.5rem;
 }
@@ -2059,5 +2095,24 @@ html {
 .login-container{
   width: 800px;
   height: 600px;
-  padding: 1rem
+  padding: 1rem;
+}
+
+ul.dropdown-content li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+ul.dropdown-content li:hover {
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity));
+  --tw-bg-opacity: 0.5;
+}
+
+ul.dropdown-content li{
+  transition-duration: 300ms;
 }
