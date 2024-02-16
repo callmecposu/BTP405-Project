@@ -1,9 +1,26 @@
-const Header = ({ user }: any) => {
+import {Tooltip} from "@nextui-org/react";
+
+const Header = ({ user, route="", content="" }: any) => {
     return (
-        <div className="navbar bg-primary py-2">
-            <img src="home_logo.svg" width="200px" alt="" />
-            <div className="flex w-full justify-end">
-                <span className=" text-xl text-slate-100 font-light">
+        <div className="navbar py-3 justify-between">
+            <a href="/">
+                <img src="logo.svg" width="200px" alt="" className="ml-2" />
+            </a>
+            {
+                route === "" ||
+                <Tooltip 
+                    showArrow={true} 
+                    content={content}
+                    className="bg-black text-white px-4 rounded-lg"
+                >
+                    <div className="text-xl font-light border-2 border-primary px-4 py-1 rounded-full cursor-pointer" style={{color: "#333"}}>
+                        {route}
+                        <div className="text-sm ml-3 w-2 h-2 rounded-full" style={{backgroundColor: '#63c46d'}}></div>
+                    </div>
+                </Tooltip>
+            }
+            <div className="flex justify-end">
+                <span className=" text-md font-light" style={{color: "#333"}}>
                     {user.username}
                 </span>
                 <div className="dropdown dropdown-bottom dropdown-end">
@@ -12,7 +29,7 @@ const Header = ({ user }: any) => {
                         className="avatar placeholder"
                         role="button"
                     >
-                        <div className="w-12 mx-4 bg-secondary rounded-full">
+                        <div className="w-11 mx-4 bg-secondary rounded-full border-2 border-primary">
                             <span className="font-semibold text-primary">
                                 {user.first_name[0]}
                                 {user.last_name[0]}

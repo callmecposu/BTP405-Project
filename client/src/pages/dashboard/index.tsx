@@ -26,7 +26,11 @@ export const getServerSideProps = async (context: any) => {
 const Home = ({ user }: any) => {
     return (
         <div>
-            <Header user={user}/>
+            <Header 
+                user={user} 
+                route={"Dashboard"} 
+                content={<div className="text-center">Explore detailed spending statistics<br /> and view all expenditure records<br /> on the dashboard page.</div>}
+            />
             <div className=" text-3xl">Hello, {user.first_name}!</div>
         </div>
     );
