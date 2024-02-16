@@ -9,5 +9,10 @@
 .login-container{
     width: 800px;
     height: 600px;
-    @apply p-4
+    @apply p-4;
+}
+
+ul.dropdown-content li{
+    @apply my-1 p-2 rounded-xl hover:bg-slate-200 hover:bg-opacity-50 transition-all;
+    transition-duration: 300ms;
 }
