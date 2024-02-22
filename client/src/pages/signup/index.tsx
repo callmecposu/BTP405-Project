@@ -52,7 +52,7 @@ const Signup = () => {
             response.headers.get("token") as string,
             60 * 60 * 24 * 3
         );
-        router.push('/home')
+        router.push('/dashboard')
 
     }
 
@@ -94,11 +94,11 @@ const Signup = () => {
                         <div className=" flex justify-center  items-center flex-col flex-wrap  w-full">
                             <h1 className=" font-bold text-3xl text-center mb-8 ">Sign Up &#128576;</h1>
 
-                            <input type="text" placeholder="Username" className="input input-bordered  w-2/3 mb-8  rounded-full " onChange={(e) => { setUsername(e.target.value) }} />
+                            <input type="text" placeholder="Username" className="input input-bordered  w-2/3 mb-8  rounded-full " onChange={(e) => { setUsername(e.target.value) }} value={username} />
 
-                            <input type="password" placeholder="Password" className="input input-bordered  w-2/3 mb-8 rounded-full" onChange={(e) => { setPassword(e.target.value) }} />
+                            <input type="password" placeholder="Password" className="input input-bordered  w-2/3 mb-8 rounded-full" onChange={(e) => { setPassword(e.target.value) }} value={password} />
 
-                            <input type="password" placeholder="Confirm Password" className="input input-bordered  w-2/3 mb-8 rounded-full" onChange={(e) => { setConfirmPassword(e.target.value) }} />
+                            <input type="password" placeholder="Confirm Password" className="input input-bordered  w-2/3 mb-8 rounded-full" onChange={(e) => { setConfirmPassword(e.target.value) }} value={confirmPassword} />
 
                             <button className="btn btn-secondary block w-2/3 rounded-full mb-4 " onClick={handleSignUp}>Sign Up</button>
 
