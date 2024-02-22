@@ -44,7 +44,7 @@ const Login = () => {
             response.headers.get("token") as string,
             60 * 60 * 24 * 3
         );
-        router.push('/home')
+        router.push('/dashboard')
     };
 
     return (
@@ -76,6 +76,7 @@ const Login = () => {
                                 type="text"
                                 placeholder="Username"
                                 className="input input-bordered  w-2/3 mb-8  rounded-full"
+                                value={username}
                                 onChange={(e) => {
                                     setUsername(e.target.value);
                                 }}
@@ -84,6 +85,7 @@ const Login = () => {
                                 type="password"
                                 placeholder="Password"
                                 className="input input-bordered  w-2/3 mb-8 rounded-full"
+                                value={password}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                 }}
