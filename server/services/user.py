@@ -45,3 +45,17 @@ def getUserFromJWT(token):
     # find the user with this id in the database
     user = UserModel.User.objects(id=userId).first()
     return user.to_json()
+
+def updateUser(userId, upd):
+    user = UserModel.User.objects(id=userId).first()
+    if 'first_name' in upd:
+        user.first_name = upd['first_name']
+    if 'last_name' in upd:
+        user.last_name = upd['last_name']
+    if 'budget' in upd:
+        budgetType = upd['budget']['budget_type']
+        maxAmount = upd['budget']['max_amount']
+        budget = UserModel.BudgetSettings(budget_type = budgetType, max_amount = maxAmount)
+        user.budget = budget
+    user.save()
+    return user.to_json()

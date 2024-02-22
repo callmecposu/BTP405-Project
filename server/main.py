@@ -7,6 +7,7 @@ from services import spendingRecord as SpendingRecordService
 from services import jwt as JWTService
 import certifi
 from services import cors as CORSService
+import json
 
 app = Flask(__name__)
 
@@ -32,11 +33,11 @@ def getUserById(id):
     CORSService.addCORS(resp, 'POST, GET, OPTIONS')
     return resp
 
-@app.route('/user', methods=['POST', 'GET', 'OPTIONS'])
+@app.route('/user', methods=['POST', 'GET', 'PATCH', 'OPTIONS'])
 def userRoute():
     if request.method == 'OPTIONS':
         resp = make_response()
-        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, PATCH, OPTIONS')
         return resp
     elif request.method == 'POST':
         print(request.json)
@@ -45,7 +46,7 @@ def userRoute():
         (newUser, token, err) = UserService.createUser(username=username, password=password)
         resp = make_response(newUser)
         resp.headers['Content-Type'] = 'application/json'
-        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, PATCH, OPTIONS')
         if err:
             resp.status = err
         if token:
@@ -57,8 +58,21 @@ def userRoute():
         user = UserService.getUserFromJWT(token)
         resp = make_response(user)
         resp.headers['Content-Type'] = 'application/json'
-        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, PATCH, OPTIONS')
         return resp
+    elif request.method == 'PATCH':
+        token = request.headers['Token']
+        print(token)
+        upd = request.json['upd']
+        print('upd: ', upd)
+        user = json.loads(UserService.getUserFromJWT(token))
+        print('user: ', user)
+        updUser = UserService.updateUser(user['_id']['$oid'], upd)
+        resp = make_response(updUser)
+        resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'POST, GET, PATCH, OPTIONS')
+        return resp
+
 
 @app.route('/login', methods=['POST', 'OPTIONS'])
 def loginUser():
