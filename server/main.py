@@ -136,34 +136,42 @@ def editRecord(id):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
-@app.route('/spendingRecord', methods=['GET'])
+@app.route('/spendingRecord', methods=['GET', 'OPTIONS'])
 def searchRecords():
-    try:
-        token = request.headers['Token']
-        tokenPayload = JWTService.decodeToken(token)
-        userId = tokenPayload["id"]
-    except:
-        resp = make_response({'message':'Unauthorized'})
-        resp.status = 401
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'GET, OPTIONS')
         return resp
+    elif request.method == 'GET':
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            resp.status = 401
+            return resp
 
-    try:
-        query = request.args.get('query')
-        dateRange = (request.args.get('dateFrom'), request.args.get('dateTo'))
-        amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
-        category = request.args.get('category')
-        sorting = request.args.get('sorting')
-        userId = str(userId)
-    except:
-        resp = make_response({'message':'Bad Request'})
-        resp.status = 400
+        try:
+            query = request.args.get('query')
+            dateRange = (request.args.get('dateFrom'), request.args.get('dateTo'))
+            amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
+            category = request.args.get('category')
+            sorting = request.args.get('sorting')
+            userId = str(userId)
+        except:
+            resp = make_response({'message':'Bad Request'})
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            resp.status = 400
+            return resp
+        
+        records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
+
+        resp = make_response(records)
+        resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'GET, OPTIONS')
         return resp
-    
-    records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
-
-    resp = make_response(records)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
 
 @app.route('/spendingRecord/<id>', methods=['DELETE'])
 def deleteRecord(id):

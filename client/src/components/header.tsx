@@ -22,7 +22,7 @@ const Header = ({ user, route="", content="" }: any) => {
                 }
                 <div className="flex justify-end">
                     <span className=" text-md font-light ml-5" style={{color: "#333"}}>
-                        {user.username}
+                        {user?.username}
                     </span>
                     <div className="dropdown dropdown-bottom dropdown-end">
                         <div
@@ -32,8 +32,8 @@ const Header = ({ user, route="", content="" }: any) => {
                         >
                             <div className="w-11 ml-4 bg-secondary rounded-full border-2 border-primary">
                                 <span className="font-semibold text-primary">
-                                    {user.first_name[0]}
-                                    {user.last_name[0]}
+                                    {user?.first_name[0]}
+                                    {user?.last_name[0]}
                                 </span>
                             </div>
                         </div>
