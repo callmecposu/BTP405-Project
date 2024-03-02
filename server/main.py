@@ -90,29 +90,6 @@ def loginUser():
 
 # SpendingRecord routers:
 
-@app.route('/spendingRecord', methods=['POST'])
-def createRecord():
-    try:
-        token = request.headers['Token']
-        tokenPayload = JWTService.decodeToken(token)
-        userId = tokenPayload["id"]
-    except:
-        resp = make_response({'message':'Unauthorized'})
-        resp.status = 401
-        return resp
-
-    source = request.json['source']
-    date = request.json['date']
-    amount = request.json['amount']
-    category = request.json['category']
-    tags = request.json['tags']
-    userId = str(userId)
-    note = request.json['note']
-    newRecord = SpendingRecordService.addSpendingRecord(source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
-    resp = make_response(newRecord)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
-
 @app.route('/spendingRecord/<id>', methods=['PUT'])
 def editRecord(id):
     try:
@@ -136,7 +113,7 @@ def editRecord(id):
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
-@app.route('/spendingRecord', methods=['GET', 'OPTIONS'])
+@app.route('/spendingRecord', methods=['POST', 'GET', 'OPTIONS'])
 def searchRecords():
     if request.method == 'OPTIONS':
         resp = make_response()
@@ -169,6 +146,29 @@ def searchRecords():
         records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
 
         resp = make_response(records)
+        resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'GET, OPTIONS')
+        return resp
+    elif request.method == 'POST':
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            return resp
+
+        source = request.json['source']
+        date = request.json['date']
+        amount = request.json['amount']
+        category = request.json['category']
+        tags = request.json['tags']
+        userId = str(userId)
+        note = request.json['note']
+        newRecord = SpendingRecordService.addSpendingRecord(source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
+        resp = make_response(newRecord)
+        
         resp.headers['Content-Type'] = 'application/json'
         CORSService.addCORS(resp, 'GET, OPTIONS')
         return resp

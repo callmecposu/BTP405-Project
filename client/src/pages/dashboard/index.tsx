@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import styled from '@emotion/styled'
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { Input, Select, SelectItem } from '@nextui-org/react';
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, ChipProps, getKeyValue} from "@nextui-org/react";
 
 
@@ -165,31 +166,14 @@ const Home = ({ user, jwt }: any) => {
         plugins: {
             title: {
                 display: true,
-                text: 'Spending by Categories',
+                text: 'Spending by Categories this Month',
             },
         },
         responsive: true,
         maintainAspectRatio: false,
     };
 
-    const columns = [
-        {
-          key: "source",
-          label: "Source",
-        },
-        {
-          key: "amount",
-          label: "Amount",
-        },
-        {
-          key: "date",
-          label: "Date",
-        },
-        {
-          key: "category",
-          label: "Category",
-        },
-    ];
+    const columns = [{ key: "source", label: "Source" }, { key: "amount", label: "Amount" }, { key: "date", label: "Date" }, { key: "category", label: "Category" }, { key: "actions", label: "Actions" }];
 
     const [spendings, setSpendings] = useState<any[]>([]);
 
@@ -200,6 +184,7 @@ const Home = ({ user, jwt }: any) => {
                 {
                     method: "GET",
                     headers: {
+                        "Token": jwt,
                         "Content-Type": "application/json",
                         "Access-Control-Allow-Headers": "*",
                     }
@@ -210,6 +195,17 @@ const Home = ({ user, jwt }: any) => {
         }
     }, [])
       
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedFromDate, setSelectedFromDate] = useState(null);
+    const [selectedToDate, setSelectedToDate] = useState(null);
+    const [selectedMinPrice, setSelectedMinPrice] = useState('');
+    const [selectedMaxPrice, setSelectedMaxPrice] = useState('');
+    const [selectedSortBy, setSelectedSortBy] = useState('');
+
+    const handleSearch = () => {
+        // Perform search logic based on the selected filters
+    };
 
     return (
         <div>
@@ -284,21 +280,92 @@ const Home = ({ user, jwt }: any) => {
                     </CardBody>
                 </Card>
             </div>
-            <div>
-                <Card>
-                    {/* <Table aria-label="Example table with dynamic content">
+            <div className="container flex gap-3 p-3 m-auto flex-wrap mt-5">
+                <Card className="flex-1 min-w-[300px] p-1 pt-0 border-2 rounded-xl mb-5">
+                    <div className="bg-white rounded-xl px-5 py-2 my-3 mx-2 shadow">
+                        <div>
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="Search"
+                                    value={searchText}
+                                    onChange={(e) => setSearchText(e.target.value)}
+                                />
+                                <Select
+                                    placeholder="Category"
+                                    value={selectedCategory}
+                                    onChange={(value) => setSelectedCategory(value.target.value)}
+                                >
+                                    <SelectItem key="groceries">Groceries</SelectItem>
+                                    <SelectItem key="restaurants">Restaurants</SelectItem>
+                                    <SelectItem key="entertainment">Entertainment</SelectItem>
+                                    <SelectItem key="health">Health</SelectItem>
+                                </Select>
+                                {/* <DatePicker
+                                    placeholder="From"
+                                    value={selectedFromDate}
+                                    onChange={(date) => setSelectedFromDate(date)}
+                                />
+                                <DatePicker
+                                    placeholder="To"
+                                    value={selectedToDate}
+                                    onChange={(date) => setSelectedToDate(date)}
+                                /> */}
+                                <Input
+                                    placeholder="Min Price"
+                                    value={selectedMinPrice}
+                                    onChange={(e) => setSelectedMinPrice(e.target.value)}
+                                />
+                                <Input
+                                    placeholder="Max Price"
+                                    value={selectedMaxPrice}
+                                    onChange={(e) => setSelectedMaxPrice(e.target.value)}
+                                />
+                                <Select
+                                    placeholder="Sort By"
+                                    value={selectedSortBy}
+                                    onChange={(value) => setSelectedSortBy(value.target.value)}
+                                >
+                                    <SelectItem key="date">Date</SelectItem>
+                                    <SelectItem key="amount">Amount</SelectItem>
+                                </Select>
+                                <Button onClick={handleSearch} className="border-2 border-primary rounded-xl px-4">Search</Button>
+                            </div>
+                            {/* Rest of the code */}
+                        </div>
+                    </div>
+                    <Table aria-label="Spending records">
                         <TableHeader columns={columns}>
                             {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
                         </TableHeader>
-                        <TableBody items={rows}>
-                            {(item) => (
-                            <TableRow key={item.key}>
-                                {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-                            </TableRow>
-                            )}
+                        <TableBody>
+                            {
+                                spendings.map((spending, index) => {
+                                    return (
+                                        <TableRow key={index}>
+                                            <TableCell className="text-center font-bold">{spending.source}</TableCell>
+                                            <TableCell className="text-center">${spending.amount}</TableCell>
+                                            <TableCell className="text-center">{new Date(spending.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</TableCell>
+                                            <TableCell className="text-center">
+                                                <Chip className="border-2 border-primary w-max m-auto">
+                                                    {spending.category}
+                                                </Chip>
+                                            </TableCell>
+                                            <TableCell className="justify-center flex gap-2">
+                                                <Button size="sm" className="border border-gray-400 w-7 h-7 rounded-md flex">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path fill="currentColor" d="M251 123.13c-.37-.81-9.13-20.26-28.48-39.61C196.63 57.67 164 44 128 44S59.37 57.67 33.51 83.52C14.16 102.87 5.4 122.32 5 123.13a12.08 12.08 0 0 0 0 9.75c.37.82 9.13 20.26 28.49 39.61C59.37 198.34 92 212 128 212s68.63-13.66 94.48-39.51c19.36-19.35 28.12-38.79 28.49-39.61a12.08 12.08 0 0 0 .03-9.75m-46.06 33C183.47 177.27 157.59 188 128 188s-55.47-10.73-76.91-31.88A130.36 130.36 0 0 1 29.52 128a130.45 130.45 0 0 1 21.57-28.11C72.54 78.73 98.41 68 128 68s55.46 10.73 76.91 31.89A130.36 130.36 0 0 1 226.48 128a130.45 130.45 0 0 1-21.57 28.12ZM128 84a44 44 0 1 0 44 44a44.05 44.05 0 0 0-44-44m0 64a20 20 0 1 1 20-20a20 20 0 0 1-20 20"/></svg>
+                                                </Button>
+                                                <Button size="sm" className="border border-gray-400 w-7 h-7 rounded-md flex">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"/></svg>                                                </Button>
+                                                <Button size="sm" className="border border-error text-error w-7 h-7 rounded-md flex">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M9 2H7a.5.5 0 0 0-.5.5V3h3v-.5A.5.5 0 0 0 9 2m2 1v-.5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2V3H2.251a.75.75 0 0 0 0 1.5h.312l.317 7.625A3 3 0 0 0 5.878 15h4.245a3 3 0 0 0 2.997-2.875l.318-7.625h.312a.75.75 0 0 0 0-1.5zm.936 1.5H4.064l.315 7.562A1.5 1.5 0 0 0 5.878 13.5h4.245a1.5 1.5 0 0 0 1.498-1.438zm-6.186 2v5a.75.75 0 0 0 1.5 0v-5a.75.75 0 0 0-1.5 0m3.75-.75a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5a.75.75 0 0 1 .75-.75" clip-rule="evenodd"/></svg>                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                                )
+                            }
                         </TableBody>
-                    </Table> */}
-                    {JSON.stringify(spendings)}
+                    </Table>
                 </Card>
             </div>
         </div>

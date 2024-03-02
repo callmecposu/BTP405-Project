@@ -23,10 +23,10 @@ export default function Home() {
                 <div className="hero-content text-center text-neutral-content">
                     <div className="max-w-lg">
                         <h1 className="mb-5 text-5xl font-bold lead">
-                            Next &#129305; level &#128200; budgeting &#128184;
+                            Next  level  budgeting
                         </h1>
                         <h1 className="mb-5 text-3xl font-bold">
-                            At the tips &#128133; of your fingers &#128400;{" "}
+                            At the tips of your fingers {" "}
                         </h1>
                         <button
                             className="btn btn-primary"
