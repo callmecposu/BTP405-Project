@@ -120,7 +120,7 @@ const Home = ({ user, jwt }: any) => {
                 backgroundColor: '#ec7a36',
             },
             {
-                label: 'Restaruants',
+                label: 'Restaurant',
                 data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
                 backgroundColor: '#f29237',
             },
@@ -143,7 +143,7 @@ const Home = ({ user, jwt }: any) => {
     };
 
     const pieData = {
-        labels: ['Gorcery', 'Transport', 'Health', 'Restaruants', 'Entertainment', 'Bills', 'Others'],
+        labels: ['Gorcery', 'Transport', 'Health', 'Restaurant', 'Entertainment', 'Bills', 'Others'],
         datasets: [
             {
                 label: 'Spent',
@@ -197,15 +197,50 @@ const Home = ({ user, jwt }: any) => {
       
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedFromDate, setSelectedFromDate] = useState(null);
-    const [selectedToDate, setSelectedToDate] = useState(null);
+    const [selectedFromDate, setSelectedFromDate] = useState('');
+    const [selectedToDate, setSelectedToDate] = useState('');
     const [selectedMinPrice, setSelectedMinPrice] = useState('');
     const [selectedMaxPrice, setSelectedMaxPrice] = useState('');
-    const [selectedSortBy, setSelectedSortBy] = useState('');
+    const [selectedSortBy, setSelectedSortBy] = useState('date_desc');
 
     const handleSearch = () => {
-        // Perform search logic based on the selected filters
+        fetch(
+            `http://localhost:8000/spendingRecord?query=${searchText}&dateFrom=${selectedFromDate || '-1'}&dateTo=${selectedToDate || '-1'}&amountFrom=${selectedMinPrice || '-1'}&amountTo=${selectedMaxPrice || '-1'}&category=${selectedCategory}&sorting=${selectedSortBy}`,
+            {
+                method: "GET",
+                headers: {
+                    "Token": jwt,
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Headers": "*",
+                }
+            }
+        )
+        .then(response => response.json())
+        .then(data => setSpendings(data))
     };
+    
+    const handleClear = () => { 
+        setSearchText('');
+        setSelectedCategory('');
+        setSelectedFromDate('');
+        setSelectedToDate('');
+        setSelectedMinPrice('');
+        setSelectedMaxPrice('');
+        setSelectedSortBy('date_desc');
+        fetch(
+            'http://localhost:8000/spendingRecord?query=&dateFrom=-1&dateTo=-1&amountFrom=-1&amountTo=-1&category=&sorting=date_desc',
+            {
+                method: "GET",
+                headers: {
+                    "Token": jwt,
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Headers": "*",
+                }
+            }
+        )
+        .then(response => response.json())
+        .then(data => setSpendings(data))
+    }
 
     return (
         <div>
@@ -284,53 +319,86 @@ const Home = ({ user, jwt }: any) => {
                 <Card className="flex-1 min-w-[300px] p-1 pt-0 border-2 rounded-xl mb-5">
                     <div className="bg-white rounded-xl px-5 py-2 my-3 mx-2 shadow">
                         <div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 mb-3">
+                                <Select
+                                    placeholder="Category"
+                                    aria-label="Category"
+                                    value={selectedCategory}
+                                    className="border border-gray-400 rounded-xl px-4 w-1/3"
+                                    classNames={{
+                                        selectorIcon: "right-0 top-1/3", 
+                                        listboxWrapper: " bg-white rounded-md shadow-md w-max",
+                                    }}
+                                    onChange={(value) => setSelectedCategory(value.target.value)}
+                                >
+                                    <SelectItem key="grocery" className="my-2">Grocery</SelectItem>
+                                    <SelectItem key="transport" className="my-2">Transport</SelectItem>
+                                    <SelectItem key="health" className="my-2">Health</SelectItem>
+                                    <SelectItem key="restaurants" className="my-2">Restaurants</SelectItem>
+                                    <SelectItem key="entertainment" className="my-2">Entertainment</SelectItem>
+                                    <SelectItem key="bills" className="my-2">Bills</SelectItem>
+                                    <SelectItem key="Electronics" className="my-2">Electronics</SelectItem>
+                                    <SelectItem key="other" className="my-2">Other</SelectItem>
+                                </Select>
                                 <Input
                                     placeholder="Search"
+                                    className="border border-gray-400 rounded-xl px-4"
                                     value={searchText}
                                     onChange={(e) => setSearchText(e.target.value)}
                                 />
-                                <Select
-                                    placeholder="Category"
-                                    value={selectedCategory}
-                                    onChange={(value) => setSelectedCategory(value.target.value)}
-                                >
-                                    <SelectItem key="groceries">Groceries</SelectItem>
-                                    <SelectItem key="restaurants">Restaurants</SelectItem>
-                                    <SelectItem key="entertainment">Entertainment</SelectItem>
-                                    <SelectItem key="health">Health</SelectItem>
-                                </Select>
-                                {/* <DatePicker
+                                <Button onClick={handleSearch} className="border-2 border-primary rounded-xl px-6">Search</Button>
+                                <Button onClick={handleClear} className="border-2 border-gray-500 rounded-xl px-6 text-gray-500">Clear</Button>
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
                                     placeholder="From"
+                                    type="date"
+                                    className="border border-gray-400 rounded-xl px-4"
+                                    max={new Date(selectedToDate || new Date()).toISOString().split('T')[0]}
                                     value={selectedFromDate}
-                                    onChange={(date) => setSelectedFromDate(date)}
+                                    onChange={(date) => setSelectedFromDate(new Date(date.target.value || new Date()).toISOString().split('T')[0])}
                                 />
-                                <DatePicker
+                                <Input
                                     placeholder="To"
+                                    type="date"
+                                    className="border border-gray-400 rounded-xl px-4"
+                                    min={new Date(selectedFromDate || new Date()).toISOString().split('T')[0]}
+                                    max={new Date().toISOString().split('T')[0]}
                                     value={selectedToDate}
-                                    onChange={(date) => setSelectedToDate(date)}
-                                /> */}
+                                    onChange={(date) => setSelectedToDate(new Date(date.target.value || new Date()).toISOString().split('T')[0])}
+                                />
                                 <Input
                                     placeholder="Min Price"
+                                    type="number"
+                                    className="border border-gray-400 rounded-xl px-4"
                                     value={selectedMinPrice}
                                     onChange={(e) => setSelectedMinPrice(e.target.value)}
                                 />
                                 <Input
                                     placeholder="Max Price"
+                                    type="number"
+                                    className="border border-gray-400 rounded-xl px-4"
                                     value={selectedMaxPrice}
                                     onChange={(e) => setSelectedMaxPrice(e.target.value)}
                                 />
                                 <Select
                                     placeholder="Sort By"
+                                    aria-label="Sort By"
+                                    defaultSelectedKeys={["date_desc"]}
                                     value={selectedSortBy}
+                                    className="border border-gray-400 rounded-xl px-4"
+                                    classNames={{
+                                        selectorIcon: "right-0 top-1/3", 
+                                        listboxWrapper: " bg-white rounded-md shadow-md w-max",
+                                    }}
                                     onChange={(value) => setSelectedSortBy(value.target.value)}
                                 >
-                                    <SelectItem key="date">Date</SelectItem>
-                                    <SelectItem key="amount">Amount</SelectItem>
+                                    <SelectItem key="date_desc" className="my-2">Date desc.</SelectItem>
+                                    <SelectItem key="date_asc" className="my-2">Date asc.</SelectItem>
+                                    <SelectItem key="amount_desc" className="my-2">Amount desc.</SelectItem>
+                                    <SelectItem key="amount_asc" className="my-2">Amount asc.</SelectItem>
                                 </Select>
-                                <Button onClick={handleSearch} className="border-2 border-primary rounded-xl px-4">Search</Button>
                             </div>
-                            {/* Rest of the code */}
                         </div>
                     </div>
                     <Table aria-label="Spending records">
