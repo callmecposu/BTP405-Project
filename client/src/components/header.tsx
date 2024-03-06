@@ -1,10 +1,11 @@
 import {Tooltip} from "@nextui-org/react";
+import Link from "next/link";
 
 const Header = ({ user, route="", content="" }: any) => {
     return (
         <div className="container m-auto py-3 px-2">
             <div className="navbar justify-between p-0">
-                <a href="/">
+                <a href={route == "Profile" ? "/dashboard" : "/"}>
                     <img src="logo.svg" width="200px" alt="" />
                 </a>
                 {
@@ -41,7 +42,7 @@ const Header = ({ user, route="", content="" }: any) => {
                             tabIndex={0}
                             className="mt-2 border-4 border-secondary dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box w-52"
                         >
-                            <li>My Profile</li>
+                            <li><Link href={'/profile'} className="p-0">My Profile</Link></li>
                             <li>Logout</li>
                         </ul>
                     </div>

@@ -65,10 +65,7 @@ def userRoute():
 def loginUser():
     if request.method == 'OPTIONS':
         resp = make_response()
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        resp.headers['Access-Control-Allow-Headers'] = '*'
-        resp.headers['Access-Control-Expose-Headers'] = '*'
-        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        CORSService.addCORS(resp, 'POST, OPTIONS')
         return resp
     elif request.method == 'POST':
         print(request.json)
@@ -78,16 +75,46 @@ def loginUser():
         resp = make_response(result)
         resp.headers['Content-Type'] = 'application/json'
         # CORS headers
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        resp.headers['Access-Control-Allow-Headers'] = '*'
-        resp.headers['Access-Control-Expose-Headers'] = '*'
-        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        CORSService.addCORS(resp, 'POST, OPTIONS')
         # end CORS headers
         if err:
             resp.status = err
         if token:
             resp.headers['Token'] = token
         return resp
+    
+@app.route('/updateBudget', methods=['POST', 'OPTIONS'])
+def updateBudget():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'POST, OPTIONS')
+        return resp
+    elif request.method == 'POST':
+        try:
+            token = request.headers['Token']
+            userId = JWTService.decodeToken(token)['id']
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            CORSService.addCORS(resp, 'POST, OPTIONS')
+            return resp
+
+        try:
+            budgetType = request.json['budget_type']
+            maxAmount = request.json['max_amount']
+            (result, err, status) = UserService.updateBudget(userId, budgetType, maxAmount)
+            resp = make_response(result)
+            resp.headers['Content-Type'] = 'application/json'
+            CORSService.addCORS(resp, 'POST, OPTIONS')
+            if status:
+                resp.status = status
+            return resp
+        except Exception as e:
+            print(e)
+            resp = make_response({'message':'Bad Request'})
+            resp.status = 400
+            CORSService.addCORS(resp, 'POST, OPTIONS')
+            return resp
 
 # SpendingRecord routers:
 

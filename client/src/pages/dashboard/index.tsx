@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/header";
-import {Card, CardBody, Button, CardFooter, CardHeader, Pagination} from "@nextui-org/react";
+import {Card, CardBody, Button, CardFooter, CardHeader, Pagination, Dropdown} from "@nextui-org/react";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -14,7 +14,8 @@ import {
 import styled from '@emotion/styled'
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { Input, Select, SelectItem } from '@nextui-org/react';
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, ChipProps, getKeyValue} from "@nextui-org/react";
+import Link from "next/link";
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, DropdownMenu, DropdownItem, DropdownTrigger} from "@nextui-org/react";
 
 
 export const getServerSideProps = async (context: any) => {
@@ -301,9 +302,29 @@ const Home = ({ user, jwt }: any) => {
             <div className="container flex gap-3 p-3 m-auto flex-wrap">
                 <Card className="flex-1 border-2 rounded-xl min-w-[300px]">
                     <CardHeader className="absolute justify-end">
-                        <div className="w-5 text-lg cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M9.5 13a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/></svg>
-                        </div>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <div className="w-5 text-lg cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M9.5 13a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/></svg>
+                                </div>
+                            </DropdownTrigger>
+                            <DropdownMenu 
+                                variant="faded" 
+                                aria-label="Edit budget"
+                                className="bg-white shdow-xl rounded-xl p-2"
+                            >
+                                <DropdownItem
+                                    key="edit"
+                                    showDivider
+                                    classNames={{
+                                        description: "text-gray-500 text-xs",
+                                    }}
+                                    startContent={<div><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"/></svg></div>}
+                                    >
+                                        <Link href='/profile'>Edit budget</Link>
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </CardHeader>
                     <CardBody>
                         <div className="flex justify-between items-center mt-4">
