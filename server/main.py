@@ -5,6 +5,7 @@ import os
 from services import user as UserService
 from services import spendingRecord as SpendingRecordService
 from services import jwt as JWTService
+from services import dashboard as DashboardService
 import certifi
 from services import cors as CORSService
 
@@ -194,6 +195,67 @@ def deleteRecord(id):
         resp = make_response({'message':'Bad Request'})
         resp.status = 400
         return resp
+    
+@app.route('/currentSpendings', methods=['GET', 'OPTIONS'])
+def getCurrentSpendings():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'GET, OPTIONS')
+        return resp
+    else:
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
+
+        try:
+            userId = str(userId)
+            spendings = DashboardService.getCurrentSpendings(userId)
+            resp = make_response(spendings)
+            resp.headers['Content-Type'] = 'application/json'
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
+        except:
+            resp = make_response({'message':'Bad Request'})
+            resp.status = 400
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
+        
+@app.route('/pastSpendings', methods=['GET', 'OPTIONS'])
+def getPastSpendings():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'GET, OPTIONS')
+        return resp
+    else:
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
+
+        try:
+            userId = str(userId)
+            spendings = DashboardService.getPastSpendings(userId)
+            resp = make_response(spendings)
+            resp.headers['Content-Type'] = 'application/json'
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
+        except Exception as e:
+            print(e)
+            resp = make_response({'message':'Bad Request'})
+            resp.status = 400
+            CORSService.addCORS(resp, 'GET, OPTIONS')
+            return resp
 
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)

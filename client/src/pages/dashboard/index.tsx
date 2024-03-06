@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/header";
-import {Card, CardBody, Button, CardFooter, CardHeader} from "@nextui-org/react";
+import {Card, CardBody, Button, CardFooter, CardHeader, Pagination} from "@nextui-org/react";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -176,6 +176,39 @@ const Home = ({ user, jwt }: any) => {
     const columns = [{ key: "source", label: "Source" }, { key: "amount", label: "Amount" }, { key: "date", label: "Date" }, { key: "category", label: "Category" }, { key: "actions", label: "Actions" }];
 
     const [spendings, setSpendings] = useState<any[]>([]);
+    const [currentSpendings, setCurrentSpendings] = useState<any[]>([]);
+    const [spentSum, setSpentSum] = useState<number>(0);
+    const [pastSpendings, setPastSpendings] = useState<any[]>([{}]);
+
+    const getCurrentSpendings = () => {
+        fetch('http://localhost:8000/currentSpendings', {
+            method: "GET",
+            headers: {
+                "Token": jwt,
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Headers": "*",
+            }
+        }).then(response => response.json())
+        .then(data => {
+            setCurrentSpendings(data)
+            setSpentSum(data.reduce((acc: number, curr: any) => acc + curr.amount, 0))
+        })
+    }
+
+    const getPastSpendings = () => {
+        fetch('http://localhost:8000/pastSpendings', {
+            method: "GET",
+            headers: {
+                "Token": jwt,
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Headers": "*",
+            }
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data)
+            setPastSpendings(data)
+        })
+    }
 
     useEffect(() => {
         if(jwt) {
@@ -191,8 +224,12 @@ const Home = ({ user, jwt }: any) => {
                 }
             )
             .then(response => response.json())
-            .then(data => setSpendings(data))
+            .then(data => {
+                setSpendings(data)
+            })
         }
+        getCurrentSpendings();
+        getPastSpendings();
     }, [])
       
     const [searchText, setSearchText] = useState('');
@@ -202,6 +239,15 @@ const Home = ({ user, jwt }: any) => {
     const [selectedMinPrice, setSelectedMinPrice] = useState('');
     const [selectedMaxPrice, setSelectedMaxPrice] = useState('');
     const [selectedSortBy, setSelectedSortBy] = useState('date_desc');
+
+    const [page, setPage] = useState(1);
+
+    const spendingsPage = useMemo(() => {
+        const start = (page-1)*5;
+        const end = start + 5;
+
+        return spendings.slice(start, end);
+    }, [spendings, page]);
 
     const handleSearch = () => {
         fetch(
@@ -259,8 +305,8 @@ const Home = ({ user, jwt }: any) => {
                     <CardBody>
                         <div className="flex justify-between items-center mt-4">
                             <div>
-                                <h2 className="text-xl font-ligth  mb-2">Your monthly budget</h2>
-                                <p className="text-4xl font-semibold">$5000<small>.00</small></p>
+                                <h2 className="text-xl font-ligth  mb-2">Your {user?.budget?.budget_type} budget</h2>
+                                <p className="text-4xl font-semibold">${Math.floor(user?.budget?.max_amount)}<small>.{(user?.budget?.max_amount % 1).toFixed(2).split('.')[1]}</small></p>
                             </div>
                         </div>
                     </CardBody>
@@ -277,8 +323,8 @@ const Home = ({ user, jwt }: any) => {
                             <div>
                                 <h2 className="text-xl font-ligth mb-2">Remaining Balance</h2>
                                 <p className="text-4xl font-semibold flex items-center">
-                                    <span>$1580</span><small>.78</small>
-                                    <span className="text-sm ml-4 bg-success px-2 py-1 rounded-xl">+18.7%</span>
+                                    <span>$</span>{Math.floor(user?.budget?.max_amount-spentSum)}<small>.{(user?.budget?.max_amount-spentSum % 1).toFixed(2).split('.')[1]}</small>
+                                    {/* <span className="text-sm ml-4 bg-success px-2 py-1 rounded-xl">+18.7%</span> */}
                                 </p>
                             </div>
                         </div>
@@ -331,14 +377,13 @@ const Home = ({ user, jwt }: any) => {
                                     }}
                                     onChange={(value) => setSelectedCategory(value.target.value)}
                                 >
-                                    <SelectItem key="grocery" className="my-2">Grocery</SelectItem>
-                                    <SelectItem key="transport" className="my-2">Transport</SelectItem>
-                                    <SelectItem key="health" className="my-2">Health</SelectItem>
-                                    <SelectItem key="restaurants" className="my-2">Restaurants</SelectItem>
-                                    <SelectItem key="entertainment" className="my-2">Entertainment</SelectItem>
-                                    <SelectItem key="bills" className="my-2">Bills</SelectItem>
-                                    <SelectItem key="Electronics" className="my-2">Electronics</SelectItem>
-                                    <SelectItem key="other" className="my-2">Other</SelectItem>
+                                    <SelectItem key="Grocery" className="my-2">Grocery</SelectItem>
+                                    <SelectItem key="Transport" className="my-2">Transport</SelectItem>
+                                    <SelectItem key="Health" className="my-2">Health</SelectItem>
+                                    <SelectItem key="Restaurants" className="my-2">Restaurants</SelectItem>
+                                    <SelectItem key="Entertainment" className="my-2">Entertainment</SelectItem>
+                                    <SelectItem key="Bills" className="my-2">Bills</SelectItem>
+                                    <SelectItem key="Others" className="my-2">Other</SelectItem>
                                 </Select>
                                 <Input
                                     placeholder="Search"
@@ -349,11 +394,11 @@ const Home = ({ user, jwt }: any) => {
                                 <Button onClick={handleSearch} className="border-2 border-primary rounded-xl px-6">Search</Button>
                                 <Button onClick={handleClear} className="border-2 border-gray-500 rounded-xl px-6 text-gray-500">Clear</Button>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap">
                                 <Input
                                     placeholder="From"
                                     type="date"
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-4 min-w-[165px] w-max"
                                     max={new Date(selectedToDate || new Date()).toISOString().split('T')[0]}
                                     value={selectedFromDate}
                                     onChange={(date) => setSelectedFromDate(new Date(date.target.value || new Date()).toISOString().split('T')[0])}
@@ -361,7 +406,7 @@ const Home = ({ user, jwt }: any) => {
                                 <Input
                                     placeholder="To"
                                     type="date"
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-4 min-w-[165px] w-max"
                                     min={new Date(selectedFromDate || new Date()).toISOString().split('T')[0]}
                                     max={new Date().toISOString().split('T')[0]}
                                     value={selectedToDate}
@@ -370,14 +415,14 @@ const Home = ({ user, jwt }: any) => {
                                 <Input
                                     placeholder="Min Price"
                                     type="number"
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-4 min-w-[125px] w-max"
                                     value={selectedMinPrice}
                                     onChange={(e) => setSelectedMinPrice(e.target.value)}
                                 />
                                 <Input
                                     placeholder="Max Price"
                                     type="number"
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-4 min-w-[125px] w-max"
                                     value={selectedMaxPrice}
                                     onChange={(e) => setSelectedMaxPrice(e.target.value)}
                                 />
@@ -386,7 +431,7 @@ const Home = ({ user, jwt }: any) => {
                                     aria-label="Sort By"
                                     defaultSelectedKeys={["date_desc"]}
                                     value={selectedSortBy}
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-4 min-w-[155px] w-max"
                                     classNames={{
                                         selectorIcon: "right-0 top-1/3", 
                                         listboxWrapper: " bg-white rounded-md shadow-md w-max",
@@ -401,13 +446,45 @@ const Home = ({ user, jwt }: any) => {
                             </div>
                         </div>
                     </div>
-                    <Table aria-label="Spending records">
+                    <Table 
+                        aria-label="Spending records"
+                        bottomContent={
+                            <div className="flex w-full justify-center">
+                                {
+                                    spendings.length === 0 ? null :
+                                    <Pagination
+                                      showControls
+                                      showShadow
+                                      color="secondary"
+                                      page={page}
+                                      total={Math.ceil(spendings.length/5)}
+                                      className="mt-4"
+                                      classNames={{
+                                          item: "w-7 h-7 border rounded-md",
+                                          next: "rotate-0 border rounded-md ml-2",
+                                          prev: "border rounded-md mr-2",
+                                          cursor: "w-7 h-7 border rounded-md translate-x-[30px]", 
+                                      }}
+                                      onChange={(page: number) => setPage(page)}
+                                    />
+                                }
+                            </div>
+                          }                    
+                    >
                         <TableHeader columns={columns}>
                             {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
                         </TableHeader>
                         <TableBody>
                             {
-                                spendings.map((spending, index) => {
+                                spendingsPage.length === 0 ? 
+                                (<TableRow>
+                                    <TableCell>&nbsp;</TableCell>
+                                    <TableCell>&nbsp;</TableCell>
+                                    <TableCell colSpan={1} className="text-center">No records found</TableCell>
+                                    <TableCell>&nbsp;</TableCell>
+                                    <TableCell>&nbsp;</TableCell>
+                                </TableRow>) :
+                                spendingsPage.map((spending, index) => {
                                     return (
                                         <TableRow key={index}>
                                             <TableCell className="text-center font-bold">{spending.source}</TableCell>
