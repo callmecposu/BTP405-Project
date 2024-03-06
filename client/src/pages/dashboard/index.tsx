@@ -99,69 +99,6 @@ const Home = ({ user, jwt }: any) => {
         },
     };
     
-    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-    
-    const data = {
-        labels,
-        datasets: [
-            {
-                label: 'Gorcery',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#db4431',
-            },
-            {
-                label: 'Transport',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#e25d33',
-            },
-            {
-                label: 'Health',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#ec7a36',
-            },
-            {
-                label: 'Restaurant',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#f29237',
-            },
-            {
-                label: 'Entertainment',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#edd147',
-            },
-            {
-                label: 'Bills',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: '#e6db68',
-            },
-            {
-                label: 'Others',
-                data: labels.map(() => (Math.floor(Math.random() * 50000)/100)),
-                backgroundColor: 'rgb(232, 232, 232)',
-            },
-        ],
-    };
-
-    const pieData = {
-        labels: ['Gorcery', 'Transport', 'Health', 'Restaurant', 'Entertainment', 'Bills', 'Others'],
-        datasets: [
-            {
-                label: 'Spent',
-                data: data.datasets.map(() => Math.floor(Math.random() * 50000)/100),
-                backgroundColor: [
-                    '#db4431',
-                    '#e25d33',
-                    '#ec7a36',
-                    '#f29237',
-                    '#edd147',
-                    '#e6db68',
-                    'rgb(232, 232, 232)',
-                ],
-                borderWidth: 0,
-            },
-        ],
-    };
-
     const pieOptions = {
         plugins: {
             title: {
@@ -179,6 +116,8 @@ const Home = ({ user, jwt }: any) => {
     const [currentSpendings, setCurrentSpendings] = useState<any[]>([]);
     const [spentSum, setSpentSum] = useState<number>(0);
     const [pastSpendings, setPastSpendings] = useState<any[]>([{}]);
+    const [historyData, setHistoryData] = useState<any>([]);
+    const [pieData, setPieData] = useState<any>([]);
 
     const getCurrentSpendings = () => {
         fetch('http://localhost:8000/currentSpendings', {
@@ -194,7 +133,6 @@ const Home = ({ user, jwt }: any) => {
             setSpentSum(data.reduce((acc: number, curr: any) => acc + curr.amount, 0))
         })
     }
-
     const getPastSpendings = () => {
         fetch('http://localhost:8000/pastSpendings', {
             method: "GET",
@@ -205,8 +143,73 @@ const Home = ({ user, jwt }: any) => {
             }
         }).then(response => response.json())
         .then(data => {
-            console.log(data)
+            const newPieData = {
+                labels: ['Gorcery', 'Transport', 'Health', 'Restaurant', 'Entertainment', 'Bills', 'Others'],
+                datasets: [
+                    {
+                        label: 'Spent',
+                        data: [data[0].spending.Grocery, data[0].spending.Transport, data[0].spending.Health, data[0].spending.Restaurants, data[0].spending.Entertainment, data[0].spending.Bills, data[0].spending.Others],
+                        backgroundColor: [
+                            '#db4431',
+                            '#e25d33',
+                            '#ec7a36',
+                            '#f29237',
+                            '#edd147',
+                            '#e6db68',
+                            'rgb(232, 232, 232)',
+                        ],
+                        borderWidth: 0,
+                    },
+                ],
+            };
+
+            setPieData(newPieData);
+
+            data.reverse();
             setPastSpendings(data)
+            const colors = ['#db4431', '#e25d33', '#ec7a36', '#f29237', '#edd147', '#e6db68', 'rgb(232, 232, 232)'];
+            const newHistoryData = {
+                labels: data.map((item: any) => item.period),
+                datasets: [
+                    {
+                        label: 'Gorcery',
+                        data: data.map((item: any) => item.spending.Grocery),
+                        backgroundColor: colors[0],
+                    },
+                    {
+                        label: 'Transport',
+                        data: data.map((item: any) => item.spending.Transport),
+                        backgroundColor: colors[1],
+                    },
+                    {
+                        label: 'Health',
+                        data: data.map((item: any) => item.spending.Health),
+                        backgroundColor: colors[2],
+                    },
+                    {
+                        label: 'Restaurants',
+                        data: data.map((item: any) => item.spending.Restaurants),
+                        backgroundColor: colors[3],
+                    },
+                    {
+                        label: 'Entertainment',
+                        data: data.map((item: any) => item.spending.Entertainment),
+                        backgroundColor: colors[4],
+                    },
+                    {
+                        label: 'Bills',
+                        data: data.map((item: any) => item.spending.Bills),
+                        backgroundColor: colors[5],
+                    },
+                    {
+                        label: 'Others',
+                        data: data.map((item: any) => item.spending.Others),
+                        backgroundColor: colors[6],
+                    },
+                ]
+            };
+
+            setHistoryData(newHistoryData);
         })
     }
 
@@ -339,12 +342,18 @@ const Home = ({ user, jwt }: any) => {
             </div>
             <div className="container flex gap-3 p-3 m-auto flex-wrap">
                 <Card className="flex-1 d-flex flex-row justify-around flex-wrap" style={{maxWidth: '100%'}}>
-                    <BarChartWrapper className="chart-container" >
-                        <Bar options={barOptions} data={data} />
-                    </BarChartWrapper>
-                    <PieChartWrapper className="chart-container" >
-                        <Doughnut options={pieOptions} data={pieData} />
-                    </PieChartWrapper>
+                    {
+                        historyData?.datasets?.length &&
+                        <BarChartWrapper className="chart-container" >
+                            <Bar options={barOptions} data={historyData} />
+                        </BarChartWrapper>
+                    }
+                    {
+                        pieData?.datasets?.length &&
+                        <PieChartWrapper className="chart-container" >
+                            <Doughnut options={pieOptions} data={pieData} />
+                        </PieChartWrapper>
+                    }
                 </Card>
             </div>
             <div className="container flex gap-3 p-3 m-auto flex-wrap mt-5">
