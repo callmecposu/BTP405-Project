@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Input, Select, SelectItem, Textarea } from '@nextui-org/react'
+import { Input, Select, SelectItem, Textarea, Button } from '@nextui-org/react'
 
 export default function SpendingForm({type, source, setSource, date, setDate, amount, setAmount, category, setCategory, tags, setTags, note, setNote, handleSubmit}: any) {
     const [newTag, setNewTag] = useState('')
@@ -74,6 +74,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                                 listboxWrapper: " bg-white rounded-md shadow-md w-max",
                             }}
                             onChange={(value) => setCategory(value.target.value)}
+                            selectedKeys={[category]}
                         >
                             <SelectItem key="Grocery" className="my-2">Grocery</SelectItem>
                             <SelectItem key="Transport" className="my-2">Transport</SelectItem>
@@ -102,7 +103,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                     </button>
                 </div>
                 <div className="flex flex-wrap mb-5">
-                    {tags.map((tag: string) => (
+                    {tags?.map((tag: string) => (
                         <div
                             key={tag}
                             className="flex items-center bg-gray-200 rounded-md px-2 py-1 m-1"
@@ -125,13 +126,13 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                     maxRows={5}
                     onChange={(e) => setNote(e.target.value)}
                 />
-                <Input
-                    className={`${(source.trim() === '' || date.trim() === '' || amount.trim() === '' || category.trim() === '') ? 'bg-gray-300' : 'bg-primary'} text-white rounded-md w-max px-6 mt-2 text-lg cursor-pointer`}
+                <Button
+                    className={`${(source?.trim() === '' || date?.trim() === '' || parseFloat(amount) <= 0 || category?.trim() === '') ? 'bg-gray-300' : 'bg-primary'} text-white rounded-md w-max px-6 mt-2 text-lg cursor-pointer py-2`}
                     onClick={() => {handleSubmit();}}
-                    type='submit'
-                    disabled={source.trim() === '' || date.trim() === '' || amount.trim() === '' || category.trim() === ''}
-                    value={`${type == "add" ? "Add" : "Edit"} Record`}
-                />
+                    disabled={source?.trim() === '' || date?.trim() === '' || parseFloat(amount) <= 0 || category?.trim() === ''}
+                >
+                    {type == "add" ? "Add" : "Update"} Record
+                </Button>
             </div>
         </div>
     )

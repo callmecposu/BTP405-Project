@@ -118,28 +118,35 @@ def updateBudget():
 
 # SpendingRecord routers:
 
-@app.route('/spendingRecord/<id>', methods=['PUT'])
+@app.route('/spendingRecord/<id>', methods=['PUT', 'OPTIONS'])
 def editRecord(id):
-    try:
-        token = request.headers['Token']
-        tokenPayload = JWTService.decodeToken(token)
-        userId = tokenPayload["id"]
-    except:
-        resp = make_response({'message':'Unauthorized'})
-        resp.status = 401
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'PUT, OPTIONS')
         return resp
+    elif request.method == 'PUT':
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            CORSService.addCORS(resp, 'PUT, OPTIONS')
+            return resp
 
-    source = request.json['source']
-    date = request.json['date']
-    amount = request.json['amount']
-    category = request.json['category']
-    tags = request.json['tags']
-    userId = str(userId)
-    note = request.json['note']
-    editedRecord = SpendingRecordService.editSpendingRecord(id=id, source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
-    resp = make_response(editedRecord)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+        source = request.json['source']
+        date = request.json['date']
+        amount = float(request.json['amount'])
+        category = request.json['category']
+        tags = request.json['tags']
+        userId = str(userId)
+        note = request.json['note']
+        editedRecord = SpendingRecordService.editSpendingRecord(id=id, source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
+        resp = make_response(editedRecord)
+        resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'PUT, OPTIONS')
+        return resp
 
 @app.route('/spendingRecord', methods=['POST', 'GET', 'OPTIONS'])
 def searchRecords():
@@ -191,7 +198,7 @@ def searchRecords():
 
         source = request.json['source']
         date = request.json['date']
-        amount = request.json['amount']
+        amount = float(request.json['amount'])
         category = request.json['category']
         tags = request.json['tags']
         userId = str(userId)
