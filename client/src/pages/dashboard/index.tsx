@@ -119,6 +119,7 @@ const Home = ({ user, jwt }: any) => {
     const [pastSpendings, setPastSpendings] = useState<any[]>([{}]);
     const [historyData, setHistoryData] = useState<any>([]);
     const [pieData, setPieData] = useState<any>([]);
+    const [difference, setDifference] = useState<number>(0);
 
     const getCurrentSpendings = () => {
         fetch('http://localhost:8000/currentSpendings', {
@@ -211,6 +212,14 @@ const Home = ({ user, jwt }: any) => {
             };
 
             setHistoryData(newHistoryData);
+
+            let currentData = data[6];
+            let previosData = data[5];
+
+            let currentTotal = currentData.spending.Grocery + currentData.spending.Transport + currentData.spending.Health + currentData.spending.Restaurants + currentData.spending.Entertainment + currentData.spending.Bills + currentData.spending.Others;
+            let previousTotal = previosData.spending.Grocery + previosData.spending.Transport + previosData.spending.Health + previosData.spending.Restaurants + previosData.spending.Entertainment + previosData.spending.Bills + previosData.spending.Others;
+
+            setDifference(Math.round(1000*(previousTotal - currentTotal)/previousTotal)/10)
         })
     }
 
@@ -348,7 +357,7 @@ const Home = ({ user, jwt }: any) => {
                                 <h2 className="text-xl font-ligth mb-2">Remaining Balance</h2>
                                 <p className="text-4xl font-semibold flex items-center">
                                     <span>$</span>{Math.floor(user?.budget?.max_amount-spentSum)}<small>.{(user?.budget?.max_amount-spentSum % 1).toFixed(2).split('.')[1]}</small>
-                                    {/* <span className="text-sm ml-4 bg-success px-2 py-1 rounded-xl">+18.7%</span> */}
+                                    <span className={`text-sm ml-4 ${difference >= 0 ? 'bg-success': 'bg-red-300'} px-2 py-1 rounded-xl`}>{difference >= 0 && "+"}{difference}%</span>
                                 </p>
                             </div>
                         </div>
@@ -482,7 +491,10 @@ const Home = ({ user, jwt }: any) => {
                     <Table 
                         aria-label="Spending records"
                         bottomContent={
-                            <div className="flex w-full justify-center">
+                            <div className="flex w-full justify-center flex-col items-center">
+                                <div className="my-2 border-t-2 px-12 pt-5 pb-2 text-gray-500">
+                                    <Link href={'addRecord'} className="hover:text-primary transition">+ Add New Spending Record</Link>
+                                </div>
                                 {
                                     spendings.length === 0 ? null :
                                     <Pagination

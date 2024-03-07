@@ -142,7 +142,7 @@ def getPastSpendings(userId):
         for index, p in enumerate(periods):
             start_date = datetime.datetime.strptime(p['start_date'], '%Y-%m-%d')
             end_date = datetime.datetime.strptime(p['end_date'], '%Y-%m-%d')
-            if start_date <= spending.date <= end_date:
+            if start_date.date() <= spending.date.date() <= end_date.date():
                 period_index = index
                 break
 

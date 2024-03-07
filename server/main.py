@@ -145,7 +145,7 @@ def editRecord(id):
 def searchRecords():
     if request.method == 'OPTIONS':
         resp = make_response()
-        CORSService.addCORS(resp, 'GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
     elif request.method == 'GET':
         try:
@@ -154,7 +154,7 @@ def searchRecords():
             userId = tokenPayload["id"]
         except:
             resp = make_response({'message':'Unauthorized'})
-            CORSService.addCORS(resp, 'GET, OPTIONS')
+            CORSService.addCORS(resp, 'POST, GET, OPTIONS')
             resp.status = 401
             return resp
 
@@ -168,7 +168,7 @@ def searchRecords():
             userId = str(userId)
         except:
             resp = make_response({'message':'Bad Request'})
-            CORSService.addCORS(resp, 'GET, OPTIONS')
+            CORSService.addCORS(resp, 'POST, GET, OPTIONS')
             resp.status = 400
             return resp
         
@@ -176,7 +176,7 @@ def searchRecords():
 
         resp = make_response(records)
         resp.headers['Content-Type'] = 'application/json'
-        CORSService.addCORS(resp, 'GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
     elif request.method == 'POST':
         try:
@@ -186,6 +186,7 @@ def searchRecords():
         except:
             resp = make_response({'message':'Unauthorized'})
             resp.status = 401
+            CORSService.addCORS(resp, 'POST, GET, OPTIONS')
             return resp
 
         source = request.json['source']
@@ -199,7 +200,7 @@ def searchRecords():
         resp = make_response(newRecord)
         
         resp.headers['Content-Type'] = 'application/json'
-        CORSService.addCORS(resp, 'GET, OPTIONS')
+        CORSService.addCORS(resp, 'POST, GET, OPTIONS')
         return resp
 
 @app.route('/spendingRecord/<id>', methods=['DELETE'])
