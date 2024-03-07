@@ -88,7 +88,7 @@ const ProfilePage: React.FC<any> = ({user, jwt}) => {
     }
 
     return (
-        <div>
+        <div className='mx-3'>
             <Header 
                 user={user} 
                 route={"Profile"} 

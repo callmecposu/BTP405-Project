@@ -71,7 +71,7 @@ def getPastSpendings(userId):
             start_month = calendar.month_name[int(start_date.split('-')[1])]
             end_month = calendar.month_name[int(end_date.split('-')[1])]
             periods.append({
-                'period': f'{start_month} {start_day} - {end_month+" " if not start_month == end_month else ""}{end_day}',
+                'period': f'{start_month[0:3]} {start_day} - {end_month[0:3]+" " if not start_month == end_month else ""}{end_day}',
                 'start_date': start_date,
                 'end_date': end_date,
                 'spending': {

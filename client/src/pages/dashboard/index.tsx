@@ -168,7 +168,7 @@ const Home = ({ user, jwt }: any) => {
         }).then(response => response.json())
         .then(data => {
             const newPieData = {
-                labels: ['Gorcery', 'Transport', 'Health', 'Restaurant', 'Entertainment', 'Bills', 'Others'],
+                labels: ['Grocery', 'Transport', 'Health', 'Restaurant', 'Entertainment', 'Bills', 'Others'],
                 datasets: [
                     {
                         label: 'Spent',
@@ -196,7 +196,7 @@ const Home = ({ user, jwt }: any) => {
                 labels: data.map((item: any) => item.period),
                 datasets: [
                     {
-                        label: 'Gorcery',
+                        label: 'Grocery',
                         data: data.map((item: any) => item.spending.Grocery),
                         backgroundColor: colors[0],
                     },
@@ -241,7 +241,7 @@ const Home = ({ user, jwt }: any) => {
             let currentTotal = currentData.spending.Grocery + currentData.spending.Transport + currentData.spending.Health + currentData.spending.Restaurants + currentData.spending.Entertainment + currentData.spending.Bills + currentData.spending.Others;
             let previousTotal = previosData.spending.Grocery + previosData.spending.Transport + previosData.spending.Health + previosData.spending.Restaurants + previosData.spending.Entertainment + previosData.spending.Bills + previosData.spending.Others;
 
-            setDifference(Math.round(1000*(previousTotal - currentTotal)/previousTotal)/10)
+            setDifference(Math.round(1000*(previousTotal - currentTotal)/(previousTotal || 1))/10)
         })
     }
 
@@ -387,10 +387,10 @@ const Home = ({ user, jwt }: any) => {
                         </div>
                     </CardBody>
                     <CardFooter className="justify-between">
-                        <div className="flex items-center">
+                        <Link className="flex items-center" href={'/resources'}>
                             <div className="bg-primary w-2 h-2 rounded-full mr-3 mt-1"></div>
                             <p className="text-black text-tiny underline cursor-pointer font-extralight text-zinc-500">Learn how to set your budget</p>
-                        </div>
+                        </Link>
                     </CardFooter>
                 </Card>
                 <Card className="flex-1 border-2 rounded-xl min-w-[300px]">
@@ -406,10 +406,10 @@ const Home = ({ user, jwt }: any) => {
                         </div>
                     </CardBody>
                     <CardFooter className="justify-between">
-                        <div className="flex items-center">
+                        <Link className="flex items-center" href={'/resources'}>
                             <div className="bg-primary w-2 h-2 rounded-full mr-3 mt-1"></div>
                             <p className="text-black text-tiny underline cursor-pointer font-extralight text-zinc-500">Learn how to optimze your spendings</p>
-                        </div>
+                        </Link>
                     </CardFooter>
                 </Card>
             </div>
@@ -441,6 +441,13 @@ const Home = ({ user, jwt }: any) => {
                             </span> */}
                             <span className="mt-2">
                                 This feature is still in <strong>development</strong>... Here you will be able to see your spending analysis for the current month, and get insights on how to optimize your spendings.
+                                <br /><br /><b><i>But now, you can visit our budgeting resources with integrated AI search!</i></b>
+                                <br />
+                                <div className="pt-4">
+                                    <Link href={'/resources'} className="bg-primary py-2 px-5 text-white rounded-lg">
+                                        Go to Resources
+                                    </Link>
+                                </div>
                             </span>
                         </div>
                     </CardBody>

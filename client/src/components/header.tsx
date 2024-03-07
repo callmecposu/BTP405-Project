@@ -46,7 +46,8 @@ const Header = ({ user, route="", content="" }: any) => {
                             tabIndex={0}
                             className="mt-2 border-4 border-secondary dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box w-52"
                         >
-                            <li><Link href={'/profile'} className="p-0">My Profile</Link></li>
+                            <li><Link href={'/profile'} className="p-0 font-semibold">My Profile</Link></li>
+                            <li><Link href={'/resources'} className="p-0">Budgeting Resources</Link></li>
                             <li 
                                 onClick={() => {Cookies.remove('jwt'); router.push("/")}}
                                 className="cursor-pointer"
