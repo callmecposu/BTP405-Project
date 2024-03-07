@@ -6,6 +6,7 @@ from services import user as UserService
 from services import spendingRecord as SpendingRecordService
 from services import jwt as JWTService
 from services import dashboard as DashboardService
+from services import resources as ResourceService
 import certifi
 from services import cors as CORSService
 
@@ -293,6 +294,20 @@ def getPastSpendings():
             resp.status = 400
             CORSService.addCORS(resp, 'GET, OPTIONS')
             return resp
+        
+@app.route('/resources', methods=['GET', 'OPTIONS'])
+def findResources():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        CORSService.addCORS(resp, 'GET, OPTIONS')
+        return resp
+    else:
+        query = request.args.get('query')
+        resources = ResourceService.findResources(query)
+        resp = make_response(resources)
+        resp.headers['Content-Type'] = 'application/json'
+        CORSService.addCORS(resp, 'GET, OPTIONS')
+        return resp
 
 if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
