@@ -5,31 +5,50 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 export const getServerSideProps = async (context: any) => {
-    const jwt = context.req.cookies["jwt"];
-    console.log("JWT: ", jwt);
-    let user = null;
-    if (jwt) {
-        console.log("fetching user...");
-        // fetch user by JWT
-        const response = await fetch('http://127.0.0.1:8000/user', {
-            headers: {
-                Token: jwt,
+    try {
+        const jwt = context.req.cookies["jwt"] || null;
+        console.log("JWT: ", jwt);
+        let user = null;
+        if (jwt) {
+            console.log("fetching user...");
+            // fetch user by JWT
+            const response = await fetch('http://127.0.0.1:8000/user', {
+                headers: {
+                    Token: jwt,
+                },
+            });
+            const result = await response.json();
+            user = result;
+        }
+        return {
+            props: {
+                user,
+                jwt
             },
-        });
-        const result = await response.json();
-        user = result;
+        };
+    } catch (error) {
+        return {
+            props: {
+                user: null,
+            }
+        }
     }
-    return {
-        props: {
-            user,
-            jwt
-        },
-    };
 };
 
 const ProfilePage: React.FC<any> = ({user, jwt}) => {
-    const [spending, setSpending] = useState<any>({});
     const router = useRouter();
+
+    useEffect(() => {
+        if (!user && router.isReady) {
+            router.push('/login');
+        }
+    }, [router, user])
+
+    if(!user) {
+        return <div>Loading...</div>
+    }
+
+    const [spending, setSpending] = useState<any>({});
 
     const id = router.query.id;
 

@@ -1,16 +1,56 @@
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function Home() {
+export const getServerSideProps = async (context: any) => {
+    try {
+        const jwt = context.req.cookies["jwt"] || null;
+        console.log("JWT: ", jwt);
+        let user = null;
+        if (jwt) {
+            console.log("fetching user...");
+            // fetch user by JWT
+            const response = await fetch('http://127.0.0.1:8000/user', {
+                headers: {
+                    Token: jwt,
+                },
+            });
+            const result = await response.json();
+            user = result;
+        }
+        return {
+            props: {
+                user,
+                jwt
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                user: null,
+            }
+        }
+    }
+};
+
+export default function Home({user}: any) {
     const router = useRouter();
 
     return (
         <div>
-            <div className="navbar w-full bg-neutral rounded-bl-xl rounded-br-xl p-4">
+            <div className="navbar w-full bg-neutral rounded-bl-xl rounded-br-xl p-4 justify-between">
                 <img className="mx-4" src="logo.svg" alt="" width="200px" />
-                <div className="flex justify-end w-full">
-                <button className="btn mx-4 btn-primary" onClick={() =>{router.push("/login")}}>Login</button>
-                    <button className="btn btn-outline mx-4" onClick={() =>{router.push("/signup")}}>Sign Up</button>
-                </div>
+                {
+                    !user?.username ? (
+                        <div className="flex justify-end w-full">
+                            <button className="btn mx-4 btn-primary" onClick={() =>{router.push("/login")}}>Login</button>
+                            <button className="btn btn-outline mx-4" onClick={() =>{router.push("/signup")}}>Sign Up</button>
+                        </div>
+                    ) : (
+                        <Link href={'/dashboard'} className="flex justify-end w-max py-2 px-5 bg-primary rounded-xl">
+                            Go to Dashbard
+                        </Link>
+                    )
+                }
             </div>
             <div
                 className="hero min-h-screen"

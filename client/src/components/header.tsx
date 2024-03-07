@@ -1,7 +1,11 @@
 import {Tooltip} from "@nextui-org/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 const Header = ({ user, route="", content="" }: any) => {
+    const router = useRouter();
+
     return (
         <div className="container m-auto py-3 px-2">
             <div className="navbar justify-between p-0">
@@ -43,7 +47,12 @@ const Header = ({ user, route="", content="" }: any) => {
                             className="mt-2 border-4 border-secondary dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box w-52"
                         >
                             <li><Link href={'/profile'} className="p-0">My Profile</Link></li>
-                            <li>Logout</li>
+                            <li 
+                                onClick={() => {Cookies.remove('jwt'); router.push("/")}}
+                                className="cursor-pointer"
+                            >
+                                Logout
+                            </li>
                         </ul>
                     </div>
                 </div>

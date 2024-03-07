@@ -19,26 +19,36 @@ import {Table, TableHeader, TableColumn, TableBody, TableRow, Modal, TableCell, 
 import { useRouter } from "next/router";
 
 export const getServerSideProps = async (context: any) => {
-    const jwt = context.req.cookies["jwt"];
-    console.log("JWT: ", jwt);
-    let user = null;
-    if (jwt) {
-        console.log("fetching user...");
-        // fetch user by JWT
-        const response = await fetch('http://127.0.0.1:8000/user', {
-            headers: {
-                Token: jwt,
+    try {
+        const jwt = context.req.cookies["jwt"] || null;
+        console.log("JWT: ", jwt);
+        let user = null;
+        if (jwt) {
+            console.log("fetching user...");
+            // fetch user by JWT
+            const response = await fetch('http://127.0.0.1:8000/user', {
+                headers: {
+                    Token: jwt,
+                },
+            });
+            const result = await response.json();
+            user = result;
+        }
+        if(user === null) {
+        }
+        return {
+            props: {
+                user,
+                jwt
             },
-        });
-        const result = await response.json();
-        user = result;
+        };
+    } catch (error) {
+        return {
+            props: {
+                user: null,
+            }
+        }
     }
-    return {
-        props: {
-            user,
-            jwt
-        },
-    };
 };
 
 const PieChartWrapper = styled.div`
@@ -80,6 +90,18 @@ const Home = ({ user, jwt }: any) => {
         Tooltip,
         Legend
     );
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user && router.isReady) {
+            router.push('/login');
+        }
+    }, [router, user])
+
+    if(!user) {
+        return <div>Loading...</div>
+    }
     
     const barOptions = {
         plugins: {
@@ -121,8 +143,6 @@ const Home = ({ user, jwt }: any) => {
     const [pieData, setPieData] = useState<any>([]);
     const [difference, setDifference] = useState<number>(0);
 
-    const router = useRouter();
-
     const getCurrentSpendings = () => {
         fetch('http://localhost:8000/currentSpendings', {
             method: "GET",
@@ -134,7 +154,7 @@ const Home = ({ user, jwt }: any) => {
         }).then(response => response.json())
         .then(data => {
             setCurrentSpendings(data)
-            setSpentSum(data.reduce((acc: number, curr: any) => acc + curr.amount, 0))
+            setSpentSum(data?.reduce((acc: number, curr: any) => acc + curr.amount, 0))
         })
     }
     const getPastSpendings = () => {
