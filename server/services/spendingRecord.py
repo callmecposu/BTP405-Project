@@ -29,8 +29,12 @@ def editSpendingRecord(id, source, date, amount, note, category, tags, userId):
     spendingRecord.save()
     return spendingRecord.to_json()
 
-def search(userId, query, dateRange, amountRange, category, sorting):
+def search(userId, query, dateRange, amountRange, category, sorting, id):
     try:
+        if id:
+            spendingRecord = SpendingRecordModel.SpendingRecord.objects(id=id, userId=userId).first()
+            return spendingRecord.to_json()
+
         pipeline = []
 
         pipeline.append(

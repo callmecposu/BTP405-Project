@@ -5,8 +5,8 @@ const Header = ({ user, route="", content="" }: any) => {
     return (
         <div className="container m-auto py-3 px-2">
             <div className="navbar justify-between p-0">
-                <a href={route == "Profile" ? "/dashboard" : "/"}>
-                    <img src="logo.svg" width="200px" alt="" />
+                <a href={route != "Dashboard" ? "/dashboard" : "/"}>
+                    <img src="/logo.svg" width="200px" alt="" />
                 </a>
                 {
                     route === "" ||

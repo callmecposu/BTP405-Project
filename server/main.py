@@ -164,6 +164,7 @@ def searchRecords():
             amountRange = (request.args.get('amountFrom'), request.args.get('amountTo'))
             category = request.args.get('category')
             sorting = request.args.get('sorting')
+            id = request.args.get('id')
             userId = str(userId)
         except:
             resp = make_response({'message':'Bad Request'})
@@ -171,7 +172,7 @@ def searchRecords():
             resp.status = 400
             return resp
         
-        records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting)
+        records = SpendingRecordService.search(userId=userId, query=query, dateRange=dateRange, amountRange=amountRange, category=category, sorting=sorting, id=id)
 
         resp = make_response(records)
         resp.headers['Content-Type'] = 'application/json'
