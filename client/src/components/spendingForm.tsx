@@ -74,7 +74,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                                 listboxWrapper: " bg-white rounded-md shadow-md w-max",
                             }}
                             onChange={(value) => setCategory(value.target.value)}
-                            selectedKeys={[category]}
+                            selectedKeys={category ? [category] :  []}
                         >
                             <SelectItem key="Grocery" className="my-2">Grocery</SelectItem>
                             <SelectItem key="Transport" className="my-2">Transport</SelectItem>

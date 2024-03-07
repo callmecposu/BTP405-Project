@@ -15,8 +15,8 @@ import styled from '@emotion/styled'
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import Link from "next/link";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, DropdownMenu, DropdownItem, DropdownTrigger} from "@nextui-org/react";
-
+import {Table, TableHeader, TableColumn, TableBody, TableRow, Modal, TableCell, Chip, DropdownMenu, DropdownItem, DropdownTrigger} from "@nextui-org/react";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = async (context: any) => {
     const jwt = context.req.cookies["jwt"];
@@ -120,6 +120,8 @@ const Home = ({ user, jwt }: any) => {
     const [historyData, setHistoryData] = useState<any>([]);
     const [pieData, setPieData] = useState<any>([]);
     const [difference, setDifference] = useState<number>(0);
+
+    const router = useRouter();
 
     const getCurrentSpendings = () => {
         fetch('http://localhost:8000/currentSpendings', {
@@ -299,6 +301,27 @@ const Home = ({ user, jwt }: any) => {
         )
         .then(response => response.json())
         .then(data => setSpendings(data))
+    }
+
+    const deleteRecord = (id: string) => {
+        fetch(`http://localhost:8000/spendingRecord/${id}`, {
+            method: 'DELETE',
+            headers: {
+                "Token": jwt,
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Headers": "*",
+            },
+        }).then(async (response) => {
+            if (response.ok) {
+                console.log("Spending record deleted successfully");
+            }
+            let newSpendings = spendings.filter((spending: any) => spending._id !== id);
+            setSpendings(newSpendings);
+            getPastSpendings();
+            getCurrentSpendings();
+        }).catch((error) => {
+            console.log("Error deleting spending record: ", error);
+        })
     }
 
     return (
@@ -505,10 +528,10 @@ const Home = ({ user, jwt }: any) => {
                                       total={Math.ceil(spendings.length/5)}
                                       className="mt-4"
                                       classNames={{
-                                          item: "w-7 h-7 border rounded-md",
+                                          item: "w-9 h-9 mx-1 border rounded-md",
                                           next: "rotate-0 border rounded-md ml-2",
                                           prev: "border rounded-md mr-2",
-                                          cursor: "w-7 h-7 border rounded-md translate-x-[30px]", 
+                                          cursor: "w-9 h-9 border rounded-md translate-x-[30px]", 
                                       }}
                                       onChange={(page: number) => setPage(page)}
                                     />
@@ -551,8 +574,31 @@ const Home = ({ user, jwt }: any) => {
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"/></svg>                                                
                                                     </Button>
                                                 </Link>
-                                                <Button size="sm" className="border border-error text-error w-7 h-7 rounded-md flex">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M9 2H7a.5.5 0 0 0-.5.5V3h3v-.5A.5.5 0 0 0 9 2m2 1v-.5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2V3H2.251a.75.75 0 0 0 0 1.5h.312l.317 7.625A3 3 0 0 0 5.878 15h4.245a3 3 0 0 0 2.997-2.875l.318-7.625h.312a.75.75 0 0 0 0-1.5zm.936 1.5H4.064l.315 7.562A1.5 1.5 0 0 0 5.878 13.5h4.245a1.5 1.5 0 0 0 1.498-1.438zm-6.186 2v5a.75.75 0 0 0 1.5 0v-5a.75.75 0 0 0-1.5 0m3.75-.75a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5a.75.75 0 0 1 .75-.75" clip-rule="evenodd"/></svg>                                                </Button>
+
+                                                <Dropdown>
+                                                    <DropdownTrigger>
+                                                        <Button size="sm" className="border border-error text-error w-7 h-7 rounded-md flex">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M9 2H7a.5.5 0 0 0-.5.5V3h3v-.5A.5.5 0 0 0 9 2m2 1v-.5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2V3H2.251a.75.75 0 0 0 0 1.5h.312l.317 7.625A3 3 0 0 0 5.878 15h4.245a3 3 0 0 0 2.997-2.875l.318-7.625h.312a.75.75 0 0 0 0-1.5zm.936 1.5H4.064l.315 7.562A1.5 1.5 0 0 0 5.878 13.5h4.245a1.5 1.5 0 0 0 1.498-1.438zm-6.186 2v5a.75.75 0 0 0 1.5 0v-5a.75.75 0 0 0-1.5 0m3.75-.75a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5a.75.75 0 0 1 .75-.75" clip-rule="evenodd"/></svg>                                                
+                                                        </Button>
+                                                    </DropdownTrigger>
+                                                    <DropdownMenu 
+                                                        variant="faded" 
+                                                        aria-label="Edit budget"
+                                                        className="bg-white shdow-2xl rounded-xl p-2 border-2 border-error"
+                                                    >
+                                                        <DropdownItem
+                                                            key="edit"
+                                                            showDivider
+                                                            classNames={{
+                                                                description: "text-gray-500 text-xs",
+                                                            }}
+                                                            startContent={'❗'}
+                                                            onClick={() => {deleteRecord(spending?._id)}}
+                                                        >
+                                                            You cannot undo this action.<br/> Click here to Delete
+                                                        </DropdownItem>
+                                                    </DropdownMenu>
+                                                </Dropdown>
                                             </TableCell>
                                         </TableRow>
                                     )

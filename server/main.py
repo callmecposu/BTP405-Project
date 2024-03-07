@@ -118,11 +118,11 @@ def updateBudget():
 
 # SpendingRecord routers:
 
-@app.route('/spendingRecord/<id>', methods=['PUT', 'OPTIONS'])
+@app.route('/spendingRecord/<id>', methods=['PUT', 'DELETE', 'OPTIONS'])
 def editRecord(id):
     if request.method == 'OPTIONS':
         resp = make_response()
-        CORSService.addCORS(resp, 'PUT, OPTIONS')
+        CORSService.addCORS(resp, 'PUT, DELETE, OPTIONS')
         return resp
     elif request.method == 'PUT':
         try:
@@ -145,8 +145,31 @@ def editRecord(id):
         editedRecord = SpendingRecordService.editSpendingRecord(id=id, source=source, date=date, amount=amount, category=category, tags=tags, userId=userId, note=note)
         resp = make_response(editedRecord)
         resp.headers['Content-Type'] = 'application/json'
-        CORSService.addCORS(resp, 'PUT, OPTIONS')
+        CORSService.addCORS(resp, 'PUT, DELETE, OPTIONS')
         return resp
+    elif request.method == 'DELETE':
+        try:
+            token = request.headers['Token']
+            tokenPayload = JWTService.decodeToken(token)
+            userId = tokenPayload["id"]
+        except:
+            resp = make_response({'message':'Unauthorized'})
+            resp.status = 401
+            CORSService.addCORS(resp, 'PUT, DELETE, OPTIONS')
+            return resp
+
+        try:
+            userId = str(userId)
+            deletedRecord = SpendingRecordService.deleteRecord(id=id, userId=userId)
+            resp = make_response(deletedRecord)
+            resp.headers['Content-Type'] = 'application/json'
+            CORSService.addCORS(resp, 'PUT, DELETE, OPTIONS')
+            return resp
+        except:
+            resp = make_response({'message':'Bad Request'})
+            resp.status = 400
+            CORSService.addCORS(resp, 'PUT, DELETE, OPTIONS')
+            return resp
 
 @app.route('/spendingRecord', methods=['POST', 'GET', 'OPTIONS'])
 def searchRecords():
@@ -208,28 +231,6 @@ def searchRecords():
         
         resp.headers['Content-Type'] = 'application/json'
         CORSService.addCORS(resp, 'POST, GET, OPTIONS')
-        return resp
-
-@app.route('/spendingRecord/<id>', methods=['DELETE'])
-def deleteRecord(id):
-    try:
-        token = request.headers['Token']
-        tokenPayload = JWTService.decodeToken(token)
-        userId = tokenPayload["id"]
-    except:
-        resp = make_response({'message':'Unauthorized'})
-        resp.status = 401
-        return resp
-
-    try:
-        userId = str(userId)
-        deletedRecord = SpendingRecordService.deleteRecord(id=id, userId=userId)
-        resp = make_response(deletedRecord)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
-    except:
-        resp = make_response({'message':'Bad Request'})
-        resp.status = 400
         return resp
     
 @app.route('/currentSpendings', methods=['GET', 'OPTIONS'])
