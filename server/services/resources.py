@@ -1,6 +1,6 @@
 from models import resources as ResourcesModel
 
-from llama_index.embeddings import HuggingFaceEmbedding
+from llama_index.legacy.embeddings import HuggingFaceEmbedding
 import torch
 
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
@@ -20,5 +20,4 @@ def findResources(query):
     
     results = sorted(results, key=lambda x: x["score"], reverse=True)
     
-    return results
-
+    return results                
