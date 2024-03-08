@@ -63,10 +63,10 @@ export default function Home({user}: any) {
                 <div className="hero-content text-center text-neutral-content">
                     <div className="max-w-lg">
                         <h1 className="mb-5 text-5xl font-bold lead">
-                            Next  level  budgeting
+                            Next  level  budgeting 💸
                         </h1>
                         <h1 className="mb-5 text-3xl font-bold">
-                            At the tips of your fingers {" "}
+                            At the tips of your fingers 🖐️{" "}
                         </h1>
                         <button
                             className="btn btn-primary"
