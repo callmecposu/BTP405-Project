@@ -1,11 +1,16 @@
 import {Tooltip} from "@nextui-org/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 const Header = ({ user, route="", content="" }: any) => {
+    const router = useRouter();
+
     return (
         <div className="container m-auto py-3 px-2">
             <div className="navbar justify-between p-0">
-                <a href="/">
-                    <img src="logo.svg" width="200px" alt="" />
+                <a href={route != "Dashboard" ? "/dashboard" : "/"}>
+                    <img src="/logo.svg" width="200px" alt="" />
                 </a>
                 {
                     route === "" ||
@@ -22,7 +27,7 @@ const Header = ({ user, route="", content="" }: any) => {
                 }
                 <div className="flex justify-end">
                     <span className=" text-md font-light ml-5" style={{color: "#333"}}>
-                        {user.username}
+                        {user?.username}
                     </span>
                     <div className="dropdown dropdown-bottom dropdown-end">
                         <div
@@ -32,8 +37,8 @@ const Header = ({ user, route="", content="" }: any) => {
                         >
                             <div className="w-11 ml-4 bg-secondary rounded-full border-2 border-primary">
                                 <span className="font-semibold text-primary">
-                                    {user.first_name[0]}
-                                    {user.last_name[0]}
+                                    {user?.first_name[0]}
+                                    {user?.last_name[0]}
                                 </span>
                             </div>
                         </div>
@@ -41,8 +46,14 @@ const Header = ({ user, route="", content="" }: any) => {
                             tabIndex={0}
                             className="mt-2 border-4 border-secondary dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 rounded-box w-52"
                         >
-                            <li>My Profile</li>
-                            <li>Logout</li>
+                            <li><Link href={'/profile'} className="p-0 font-semibold">My Profile</Link></li>
+                            <li><Link href={'/resources'} className="p-0">Budgeting Resources</Link></li>
+                            <li 
+                                onClick={() => {Cookies.remove('jwt'); router.push("/")}}
+                                className="cursor-pointer"
+                            >
+                                Logout
+                            </li>
                         </ul>
                     </div>
                 </div>

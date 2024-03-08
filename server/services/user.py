@@ -45,3 +45,27 @@ def getUserFromJWT(token):
     # find the user with this id in the database
     user = UserModel.User.objects(id=userId).first()
     return user.to_json()
+
+def updateBudget(userId, budgetType, maxAmount):
+    user = UserModel.User.objects(id=userId).first()
+
+    try:
+        maxAmount = float(maxAmount)
+    except ValueError:
+        return ({'message': f'Invalid max amount \'{maxAmount}\'!'}, None, 400)
+    
+    if not user:
+        return ({'message': f'User with id \'{userId}\' does not exist!'}, None, 404)
+    
+    if budgetType not in ['daily', 'weekly', 'monthly']:
+        return ({'message': f'Invalid budget type \'{budgetType}\'!'}, None, 400)
+    
+    if maxAmount < 0:
+        return ({'message': f'Invalid max amount \'{maxAmount}\'!'}, None, 400)
+
+    user.budget = {
+        'budget_type': budgetType,
+        'max_amount': maxAmount
+    }
+    user.save()
+    return (user.to_json(), None, 200)
