@@ -126,7 +126,7 @@ const Home = ({ user, jwt }: any) => {
         plugins: {
             title: {
                 display: true,
-                text: 'Spending by Categories this Month',
+                text: `Spending by Categories this ${user?.budget?.budget_type.replace('ly', '').replace('i', 'y')}`,
             },
         },
         responsive: true,
@@ -184,7 +184,7 @@ const Home = ({ user, jwt }: any) => {
                         ],
                         borderWidth: 0,
                     },
-                ],
+                ]
             };
 
             setPieData(newPieData);
@@ -400,7 +400,7 @@ const Home = ({ user, jwt }: any) => {
                                 <h2 className="text-xl font-ligth mb-2">Remaining Balance</h2>
                                 <p className="text-4xl font-semibold flex items-center">
                                     <span>$</span>{Math.floor(user?.budget?.max_amount-spentSum)}<small>.{(user?.budget?.max_amount-spentSum % 1).toFixed(2).split('.')[1]}</small>
-                                    <span className={`text-sm ml-4 ${difference >= 0 ? 'bg-success': 'bg-red-300'} px-2 py-1 rounded-xl`}>{difference >= 0 && "+"}{difference}%</span>
+                                    {(difference < 1000 && difference > -1000) && <span className={`text-sm ml-4 ${difference >= 0 ? 'bg-success': 'bg-red-300'} px-2 py-1 rounded-xl`}>{difference >= 0 && "+"}{difference}%</span>}
                                 </p>
                             </div>
                         </div>
@@ -422,9 +422,15 @@ const Home = ({ user, jwt }: any) => {
                         </BarChartWrapper>
                     }
                     {
-                        pieData?.datasets?.length &&
+                        !!pieData?.datasets?.length &&
                         <PieChartWrapper className="chart-container" >
-                            <Doughnut options={pieOptions} data={pieData} />
+                            {
+                                !!(pieData?.datasets[0]?.data?.reduce((acc: number, curr: number) => acc + curr, 0) || 0) ?
+                                <Doughnut options={pieOptions} data={pieData} /> :
+                                <div className="flex justify-center items-center w-full h-full">
+                                    <div className="text-gray-400 text-2xl">No spendings this {user?.budget?.budget_type.replace('ly', '').replace('i', 'y')} yet</div>
+                                </div>
+                            }
                         </PieChartWrapper>
                     }
                 </Card>
@@ -432,7 +438,7 @@ const Home = ({ user, jwt }: any) => {
             <div className="container flex gap-3 p-3 m-auto flex-wrap mt-5">
                 <Card className="flex-1 border-2 rounded-xl min-w-[300px] p-1 pt-0">
                     <CardBody className="flex justify-between items-center">
-                        <div className="flex">
+                        <div className="flex justify-start w-full">
                             <div className="text-3xl text-primary border-2 p-2 rounded-full mr-4" style={{width: "max-content", display: "inline-block", height: "max-content"}}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M15.5 10.071c0-2.582-1.426-4.853-3.633-6.087l1.039-1.87a.75.75 0 1 0-1.312-.728l-1.11 1.997A8.1 8.1 0 0 0 8 3a8.1 8.1 0 0 0-2.485.383l-1.11-1.997a.75.75 0 1 0-1.31.728l1.038 1.87C1.926 5.218.5 7.489.5 10.07c0 .813.169 1.603.614 2.294c.448.697 1.09 1.158 1.795 1.46C4.227 14.39 6.02 14.5 8 14.5s3.773-.11 5.09-.675c.707-.302 1.348-.763 1.796-1.46c.446-.691.614-1.481.614-2.294m-13.5 0C2 12.5 4 13 8 13s6-.5 6-2.929c0-3-2.5-5.571-6-5.571s-6 2.57-6 5.57Zm8.5 1.179a.75.75 0 0 1-.75-.75V9a.75.75 0 0 1 1.5 0v1.5a.75.75 0 0 1-.75.75m-5.75-.75a.75.75 0 0 0 1.5 0V9a.75.75 0 0 0-1.5 0z" clip-rule="evenodd"/></svg>
                             </div>
@@ -440,8 +446,8 @@ const Home = ({ user, jwt }: any) => {
                                 Your spending analysis for February shows <strong>consistent</strong> spending in <strong>groceries</strong>, <strong>restaurants</strong>, and <strong>entertainment</strong>. However, there's a notable increase in <strong>health expenses</strong> during the last week. To optimize, consider <em>meal planning</em> to reduce restaurant costs and explore more <em>affordable entertainment</em> options. Additionally, maintaining a <em>health fund</em> can help manage unexpected medical expenses without affecting your budget drastically.
                             </span> */}
                             <span className="mt-2">
-                                This feature is still in <strong>development</strong>... Here you will be able to see your spending analysis for the current month, and get insights on how to optimize your spendings.
-                                <br /><br /><b><i>But now, you can visit our budgeting resources with integrated AI search!</i></b>
+                                {/* This feature is still in <strong>development</strong>... Here you will be able to see your spending analysis for the current month, and get insights on how to optimize your spendings. */}
+                                <b><i>Visit our budgeting resources with integrated AI search!</i></b>
                                 <br />
                                 <div className="pt-4">
                                     <Link href={'/resources'} className="bg-primary py-2 px-5 text-white rounded-lg">
@@ -462,9 +468,9 @@ const Home = ({ user, jwt }: any) => {
                                     placeholder="Category"
                                     aria-label="Category"
                                     value={selectedCategory}
-                                    className="border border-gray-400 rounded-xl px-4 w-1/3"
+                                    className="border border-gray-400 rounded-xl px-0 w-1/3"
                                     classNames={{
-                                        selectorIcon: "right-0 top-1/3", 
+                                        selectorIcon: "right-0 top-1/3 mr-2", 
                                         listboxWrapper: " bg-white rounded-md shadow-md w-max",
                                     }}
                                     onChange={(value) => setSelectedCategory(value.target.value)}
@@ -479,7 +485,7 @@ const Home = ({ user, jwt }: any) => {
                                 </Select>
                                 <Input
                                     placeholder="Search"
-                                    className="border border-gray-400 rounded-xl px-4"
+                                    className="border border-gray-400 rounded-xl px-0"
                                     value={searchText}
                                     onChange={(e) => setSearchText(e.target.value)}
                                 />
@@ -490,7 +496,7 @@ const Home = ({ user, jwt }: any) => {
                                 <Input
                                     placeholder="From"
                                     type="date"
-                                    className="border border-gray-400 rounded-xl px-4 min-w-[165px] w-max"
+                                    className="border border-gray-400 rounded-xl px-0 min-w-[165px] w-max"
                                     max={new Date(selectedToDate || new Date()).toISOString().split('T')[0]}
                                     value={selectedFromDate}
                                     onChange={(date) => setSelectedFromDate(new Date(date.target.value || new Date()).toISOString().split('T')[0])}
@@ -498,7 +504,7 @@ const Home = ({ user, jwt }: any) => {
                                 <Input
                                     placeholder="To"
                                     type="date"
-                                    className="border border-gray-400 rounded-xl px-4 min-w-[165px] w-max"
+                                    className="border border-gray-400 rounded-xl px-0 min-w-[165px] w-max"
                                     min={new Date(selectedFromDate || new Date()).toISOString().split('T')[0]}
                                     max={new Date().toISOString().split('T')[0]}
                                     value={selectedToDate}
@@ -507,14 +513,14 @@ const Home = ({ user, jwt }: any) => {
                                 <Input
                                     placeholder="Min Price"
                                     type="number"
-                                    className="border border-gray-400 rounded-xl px-4 min-w-[125px] w-max"
+                                    className="border border-gray-400 rounded-xl px-0 min-w-[125px] w-max"
                                     value={selectedMinPrice}
                                     onChange={(e) => setSelectedMinPrice(e.target.value)}
                                 />
                                 <Input
                                     placeholder="Max Price"
                                     type="number"
-                                    className="border border-gray-400 rounded-xl px-4 min-w-[125px] w-max"
+                                    className="border border-gray-400 rounded-xl px-0 min-w-[125px] w-max"
                                     value={selectedMaxPrice}
                                     onChange={(e) => setSelectedMaxPrice(e.target.value)}
                                 />
@@ -523,7 +529,7 @@ const Home = ({ user, jwt }: any) => {
                                     aria-label="Sort By"
                                     defaultSelectedKeys={["date_desc"]}
                                     value={selectedSortBy}
-                                    className="border border-gray-400 rounded-xl px-4 min-w-[155px] w-max"
+                                    className="border border-gray-400 rounded-xl px-0 min-w-[155px] w-max"
                                     classNames={{
                                         selectorIcon: "right-0 top-1/3", 
                                         listboxWrapper: " bg-white rounded-md shadow-md w-max",
@@ -567,7 +573,7 @@ const Home = ({ user, jwt }: any) => {
                           }                    
                     >
                         <TableHeader columns={columns}>
-                            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                            {(column) => <TableColumn key={column.key} className="text-center">{column.label}</TableColumn>}
                         </TableHeader>
                         <TableBody>
                             {
@@ -619,10 +625,16 @@ const Home = ({ user, jwt }: any) => {
                                                             classNames={{
                                                                 description: "text-gray-500 text-xs",
                                                             }}
-                                                            startContent={'❗'}
-                                                            onClick={() => {deleteRecord(spending?._id)}}
+                                                            className="cursor-default"
+                                                            startContent={''}
                                                         >
-                                                            You cannot undo this action.<br/> Click here to Delete
+                                                            <div className="mb-3">❗ You cannot undo this action.</div>
+                                                            <b 
+                                                                className="text-white bg-error px-3 py-1 rounded-lg mb-2 hover:shadow-lg transition cursor-pointer"
+                                                                onClick={() => {deleteRecord(spending?._id)}}
+                                                            >
+                                                                Click here to Delete
+                                                            </b>
                                                         </DropdownItem>
                                                     </DropdownMenu>
                                                 </Dropdown>

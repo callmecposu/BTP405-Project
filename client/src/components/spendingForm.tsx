@@ -31,7 +31,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                         <Input
                             placeholder="Where did you spend?"
                             type="text"
-                            className="border border-gray-400 mb-4 rounded-xl px-1 min-w-[125px] w-full max-w-[400px] bg-white"
+                            className="border border-gray-400 mb-4 rounded-xl px-0 min-w-[125px] w-full max-w-[400px] bg-white"
                             value={source}
                             required
                             onChange={(e) => setSource(e.target.value)}
@@ -42,8 +42,9 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                         <Input
                             placeholder="When did you send?"
                             type="date"
-                            className="border border-gray-400 mb-4 rounded-xl px-1 min-w-[125px] w-full max-w-[400px] bg-white"
+                            className="border border-gray-400 mb-4 rounded-xl px-0 min-w-[125px] w-full max-w-[400px] bg-white"
                             value={date}
+                            max={new Date().toISOString().split('T')[0]}
                             required
                             onChange={(e) => setDate(e.target.value)}
                         />
@@ -55,7 +56,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                         <Input
                             placeholder="How much did you spend?"
                             type="number"
-                            className="border border-gray-400 mb-4 rounded-xl px-1 min-w-[125px] w-full max-w-[400px] bg-white"
+                            className="border border-gray-400 mb-4 rounded-xl px-0 min-w-[125px] w-full max-w-[400px] bg-white"
                             value={amount}
                             required
                             onChange={(e) => setAmount(e.target.value)}
@@ -68,9 +69,9 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                             aria-label="Category"
                             value={category}
                             required
-                            className="border border-gray-400 rounded-xl px-1 w-1/3 bg-white w-full max-w-[400px] mb-4"
+                            className="border border-gray-400 rounded-xl px-0 w-1/3 bg-white w-full max-w-[400px] mb-4"
                             classNames={{
-                                selectorIcon: "right-0 top-1/3", 
+                                selectorIcon: "right-0 top-1/3 mr-3", 
                                 listboxWrapper: " bg-white rounded-md shadow-md w-max",
                             }}
                             onChange={(value) => setCategory(value.target.value)}
@@ -91,7 +92,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                     <Input
                         placeholder="Add a tag"
                         type="text"
-                        className="border border-gray-400 mb-4 rounded-xl h-10 px-1 min-w-[125px] w-full max-w-[400px] bg-white"
+                        className="border border-gray-400 mb-4 rounded-xl h-10 px-0 min-w-[125px] w-full max-w-[400px] bg-white"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                     />
@@ -121,7 +122,7 @@ export default function SpendingForm({type, source, setSource, date, setDate, am
                 <div className='mb-2 ml-2'>Notes</div>
                 <Textarea
                     placeholder="Short note may help to reflect on your spendings later"
-                    className="border border-gray-400 mb-4 rounded-xl px-1 min-w-[125px] w-full max-w-[400px] bg-white"
+                    className="border border-gray-400 mb-4 rounded-xl px-0 min-w-[125px] w-full max-w-[400px] bg-white"
                     value={note}
                     maxRows={5}
                     onChange={(e) => setNote(e.target.value)}
