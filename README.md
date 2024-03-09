@@ -1,35 +1,32 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/545oUMxH)
+# Say Hello to Budget Buddy! 👋
 
-### Please use the following template to add a ReadMe for your repo.
+## Proposal Document 📚
 
-## 1. Project Title and Description
-    - Title: Provide a clear and concise title for your project.
-    - Description: Give a brief overview of what your project does and its purpose.
-## 2. Installation
-    - Dependencies: List any dependencies or prerequisites required to use your project.
-    - Installation Instructions: Provide step-by-step instructions on how to install and set up your project.
-## 3. Usage
-    - Examples: Include examples or code snippets to demonstrate how to use your project.
-    - Configuration: Explain any configuration options or settings users might need to know about.
-## 4. Features
-    - List of Features: Outline the main features and functionalities of your project.
-## 5. Contributing
-    - Guidelines: Explain how others can contribute to your project, including information on submitting bug reports, feature requests, or code contributions.
-    - Code Style: If applicable, provide guidelines or references to your code style.
-## 6. Credits
-    - Authors: List the authors or contributors of the project.
-    - Acknowledgments: Mention any individuals or resources that helped inspire or support your project.
-## 7. License
-    - License Information: Specify the license under which your project is distributed.
-## 8. Additional Sections (Optional)
-    - FAQ: Include frequently asked questions and their answers.
-    - Troubleshooting: Provide solutions to common issues or troubleshooting tips.
-    - Roadmap: Outline the future development plans for your project.
-    - Changelog: Document changes and updates to your project over time.
+https://docs.google.com/document/d/18r3f97LHfF1MQrcBu4TFE2jFhboMJkEVPRCAOlpIBVA/edit?usp=sharing
 
-## Markdown Formatting Tips
-  - Use headings (#, ##, ###, etc.) to structure your document.
-  - Utilize lists (- or 1.) for easy-to-read information.
-  - Include links to relevant resources or documentation.
-  - Add code blocks using triple backticks (```) for code snippets.
-  - Use images or diagrams to enhance understanding where applicable.
+## Workflow Conventions 📜
+
+- All the source code is located in this repo. Backend code is located in `/server` and the Frontend code is located in `/client` respectively.
+- All the sensitive information goes into `.env` file that is `.gitignore` 'd. It must not be shared within GitHub but rather via private communication channels.
+- When you are working on a new feature, you create a new branch from `main` for it. After finishing the work, you make a Pull Request. Example of the branch name: `server/feature/authorization` or `client/bugfix/search-bar`
+
+## Branch Naming Conventions 🌿
+### To maintain an organized codebase, we adhere to the following branch naming conventions:
+
+
+- New Features: `feature/<feature-name>`
+- Bug Fixes: `bugfix/<bug-name>`
+- Hot Fixes: `hotfix/<hotfix-name>`
+- Releases: `release/<release-version>`
+- Improvements: `improvement/<improvement-name>`
+- Refactoring: `refactor/<component>`
+- Documentation: `docs/<what-to-document>`
+- Development: `develop (This is an ongoing branch where features are merged and tested)`
+- Main Branch: `main (This is the default branch, often reflecting the production-ready state of our code)`
+
+## GitHub Project Board 📌
+
+- Board: View items from the current iteration and development progress
+- Backlog: View all tasks that will be completed in the following iterations
+- User Stories: View all User Stories and their descriptions
+- My Tasks: View all Tasks assigned to @me
