@@ -144,7 +144,7 @@ const Home = ({ user, jwt }: any) => {
     const [difference, setDifference] = useState<number>(0);
 
     const getCurrentSpendings = () => {
-        fetch('http://localhost:8000/currentSpendings', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/currentSpendings`, {
             method: "GET",
             headers: {
                 "Token": jwt,
@@ -158,7 +158,7 @@ const Home = ({ user, jwt }: any) => {
         })
     }
     const getPastSpendings = () => {
-        fetch('http://localhost:8000/pastSpendings', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/pastSpendings`, {
             method: "GET",
             headers: {
                 "Token": jwt,
@@ -248,7 +248,7 @@ const Home = ({ user, jwt }: any) => {
     useEffect(() => {
         if(jwt) {
             fetch(
-                'http://localhost:8000/spendingRecord?query=&dateFrom=-1&dateTo=-1&amountFrom=-1&amountTo=-1&category=&sorting=date_desc',
+                `${process.env.NEXT_PUBLIC_API_URI}/spendingRecord?query=&dateFrom=-1&dateTo=-1&amountFrom=-1&amountTo=-1&category=&sorting=date_desc`,
                 {
                     method: "GET",
                     headers: {
@@ -286,7 +286,7 @@ const Home = ({ user, jwt }: any) => {
 
     const handleSearch = () => {
         fetch(
-            `http://localhost:8000/spendingRecord?query=${searchText}&dateFrom=${selectedFromDate || '-1'}&dateTo=${selectedToDate || '-1'}&amountFrom=${selectedMinPrice || '-1'}&amountTo=${selectedMaxPrice || '-1'}&category=${selectedCategory}&sorting=${selectedSortBy}`,
+            `${process.env.NEXT_PUBLIC_API_URI}/spendingRecord?query=${searchText}&dateFrom=${selectedFromDate || '-1'}&dateTo=${selectedToDate || '-1'}&amountFrom=${selectedMinPrice || '-1'}&amountTo=${selectedMaxPrice || '-1'}&category=${selectedCategory}&sorting=${selectedSortBy}`,
             {
                 method: "GET",
                 headers: {
@@ -309,7 +309,7 @@ const Home = ({ user, jwt }: any) => {
         setSelectedMaxPrice('');
         setSelectedSortBy('date_desc');
         fetch(
-            'http://localhost:8000/spendingRecord?query=&dateFrom=-1&dateTo=-1&amountFrom=-1&amountTo=-1&category=&sorting=date_desc',
+            `${process.env.NEXT_PUBLIC_API_URI}/spendingRecord?query=&dateFrom=-1&dateTo=-1&amountFrom=-1&amountTo=-1&category=&sorting=date_desc`,
             {
                 method: "GET",
                 headers: {
@@ -324,7 +324,7 @@ const Home = ({ user, jwt }: any) => {
     }
 
     const deleteRecord = (id: string) => {
-        fetch(`http://localhost:8000/spendingRecord/${id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/spendingRecord/${id}`, {
             method: 'DELETE',
             headers: {
                 "Token": jwt,

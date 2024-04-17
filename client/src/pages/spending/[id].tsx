@@ -53,7 +53,7 @@ const ProfilePage: React.FC<any> = ({user, jwt}) => {
     const id = router.query.id;
 
     const getSpendingRecord = async () => {
-        const response = await fetch(`http://localhost:8000/spendingRecord?id=${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/spendingRecord?id=${id}`, {
             method: "GET",
             headers: {
                 "Token": jwt,

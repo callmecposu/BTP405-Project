@@ -61,7 +61,7 @@ const ProfilePage: React.FC<any> = ({user, jwt}) => {
     };
 
     const handleSave = () => {
-        fetch('http://localhost:8000/updateBudget', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/updateBudget`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

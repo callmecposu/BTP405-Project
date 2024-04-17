@@ -56,7 +56,7 @@ export default function AddRecord({user, jwt}: any) {
     const [note, setNote] = useState('');
 
     const handleAddRecord = () => {
-        fetch('http://localhost:8000/spendingRecord', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/spendingRecord`, {
             method: 'POST',
             headers: {
                 "Token": jwt,

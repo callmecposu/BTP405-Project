@@ -59,7 +59,7 @@ export default function AddRecord({user, jwt}: any) {
     const id = router.query.id;
 
     const handleAddRecord = () => {
-        fetch(`http://localhost:8000/spendingRecord/${id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/spendingRecord/${id}`, {
             method: 'PUT',
             headers: {
                 "Token": jwt,
@@ -85,7 +85,7 @@ export default function AddRecord({user, jwt}: any) {
     }
 
     const getSpendingRecord = async () => {
-        const response = await fetch(`http://localhost:8000/spendingRecord?id=${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/spendingRecord?id=${id}`, {
             method: "GET",
             headers: {
                 "Token": jwt,

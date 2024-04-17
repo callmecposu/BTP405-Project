@@ -45,7 +45,7 @@ export default function Resources({user}: any) {
     const getResources = (query: string) => {
         setLoading(true)
         setSearch(query)
-        fetch(`http://localhost:8000/resources?query=${query || ""}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URI}/resources?query=${query || ""}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
