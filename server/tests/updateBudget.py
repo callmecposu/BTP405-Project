@@ -14,6 +14,7 @@ class TestRoutes(unittest.TestCase):
                                   headers={'Content-Type': 'application/json'},
                                   json=loginCreds)
         self.token = loginResp.headers.get('Token')
+        print('token: ', self.token)
         
         getUserResp = requests.get(self.base_url + '/user',
                                    headers={'Token': self.token})
@@ -23,26 +24,35 @@ class TestRoutes(unittest.TestCase):
       
 
     def test_updateBudget_noToken(self):
-        data = {'username': 'callme', 'password': '123'}
-        responce = requests.post(self.base_url + '/updateBadget',
-                                 headers={' Content-Type': 'application/json'},
-                                 json=data)
-        self.assertEqual(responce.status_code, 400)
+        response = requests.post(self.base_url + '/updateBudget',
+                                 headers={'Content-Type': 'application/json'},
+                                )
+        self.assertEqual(response.status_code, 401)
 
     def test_updateBugdet_token(self):
-        data = {'username': 'callme', 'password': '123'}
-        responce = requests.post(self.base_url + '/updateBadget',
-                                 headers={' Content-Type': 'application/json'},
+        data = {
+            'budget_type': 'daily',
+            'max_amount': 25
+        }
+        response = requests.post(self.base_url + '/updateBudget',
+                                 headers={
+                                     'Content-Type': 'application/json',
+                                     'Token': self.token
+                                     },
                                  json=data)
-        
-
+        print('resp: ', response.json())
+        self.assertEqual(response.status_code, 200)
+        if response.status_code == 200:
+            revertResp = requests.post(
+                self.base_url + '/updateBudget',
+                headers={
+                    'Token': self.token,
+                    'Content-Type': 'application/json'
+                },
+                json=self.userBudget
+            )
+            self.assertEqual(revertResp.status_code, 200)
             
         
-
-        
-        
-
-   
-
 if __name__ == '__main__':
     unittest.main()

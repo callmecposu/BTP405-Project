@@ -7,6 +7,7 @@
 - pip3 install pyjwt
 - pip3 install torch
 - pip3 install llama-index
+- pip3 install requests
 
 
 ## Launching Server

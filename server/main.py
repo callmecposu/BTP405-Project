@@ -111,7 +111,7 @@ def updateBudget():
                 resp.status = status
             return resp
         except Exception as e:
-            print(e)
+            print('exception:', e)
             resp = make_response({'message':'Bad Request'})
             resp.status = 400
             CORSService.addCORS(resp, 'POST, OPTIONS')
