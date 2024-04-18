@@ -47,7 +47,7 @@ export default function Home({user}: any) {
                         </div>
                     ) : (
                         <Link href={'/dashboard'} className="flex justify-end w-max py-2 px-5 bg-primary rounded-xl">
-                            Go to Dashbard
+                            Go to Dashboard
                         </Link>
                     )
                 }
