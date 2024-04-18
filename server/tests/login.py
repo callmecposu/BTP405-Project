@@ -2,7 +2,7 @@ import unittest
 import requests
 
 
-class TestRoutes(unittest.TestCase):
+class TestLogin(unittest.TestCase):
 
     def setUp(self):
         self.base_url = 'http://localhost:8000'
