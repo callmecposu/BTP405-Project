@@ -63,9 +63,6 @@ def updateBudget(userId, budgetType, maxAmount):
     if maxAmount < 0:
         return ({'message': f'Invalid max amount \'{maxAmount}\'!'}, None, 400)
 
-    user.budget = {
-        'budget_type': budgetType,
-        'max_amount': maxAmount
-    }
+    user.budget = UserModel.Budget(budget_type=budgetType, max_amount=maxAmount)
     user.save()
     return (user.to_json(), None, 200)
