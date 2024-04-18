@@ -9,7 +9,7 @@ export const getServerSideProps = async (context: any) => {
         if (jwt) {
             console.log("fetching user...");
             // fetch user by JWT
-            const response = await fetch('http://127.0.0.1:8000/user', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/user`, {
                 headers: {
                     Token: jwt,
                 },
