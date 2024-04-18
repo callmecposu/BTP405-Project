@@ -6,3 +6,4 @@ PyJWT==2.8.0
 torch==2.2.2
 llama-index==0.10.17
 transformers==4.38.2
+certifi==2023.11.17
